@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import got from 'got';
-import rankStyle from '../../styles/rank.module.css'
+import rankStyle from 'styles/rank.module.css'
 
 interface Rank {
 	rank: string
