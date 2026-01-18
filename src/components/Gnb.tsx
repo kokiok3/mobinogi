@@ -12,14 +12,14 @@ export default function Navigation() {
         const isActive = currentPath === path;
 
         return {
-            text: `text-[16px] ${isActive ? 'text-black' : ''}`,
+            text: `flex items-center w-full h-full px-12  text-[16px]  ${isActive ? 'text-black' : ''}`,
             bar: `absolute left-0 bottom-0 w-full h-7 bg-orange rounded-t-[5px] transform scale-y-0 origin-bottom group-hover:scale-y-100 transition-transform ${isActive ? 'scale-y-100' : 'scale-y-0'}`
         }
     }
 
     return (
         <nav className="flex items-center mx-auto justify-center w-full h-55 bg-white sticky top-0">
-            <div className="absolute left-50 flex  items-center gap-9 ">
+            <Link href={'/'} className="absolute left-50 flex  items-center gap-9 ">
                 <LogoIcon />
 
                 <div className="flex flex-col font-extrabold">
@@ -28,7 +28,7 @@ export default function Navigation() {
 ">mobi rank</span>
 
                 </div>
-            </div>
+            </Link>
             <ul className="flex gap-20 h-full">
                 {
                     MENU.map((menu) => {
@@ -36,8 +36,8 @@ export default function Navigation() {
 
                         return (
 
-                            <li key={menu.name} className="group relative flex items-center h-full px-12 text-gray-500 cursor-pointer ">
-                                <span className={style.text}><Link href={menu.path}>{menu.name}</Link></span>
+                            <li key={menu.name} className="group relative flex items-center h-full text-gray-500 cursor-pointer ">
+                                <Link href={menu.path} className={style.text}>{menu.name}</Link>
                                 <span className={style.bar}></span>
                             </li>
 
