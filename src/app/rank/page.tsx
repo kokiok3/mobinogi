@@ -1,7 +1,6 @@
-
 import * as cheerio from 'cheerio';
+import Pagination from 'components/Pagination';
 import got from 'got';
-import rankStyle from 'styles/rank.module.css'
 import Image from 'next/image';
 
 
@@ -264,6 +263,7 @@ export default async function PageRank() {
 					<span className="icon-[tabler--search] text-base-content absolute end-10 top-1/2  shrink-0 -translate-y-1/2" ></span>
 				</div>
 			</div>
+			{/* 테이블 헤더 끝 */}
 
 			{/* 테이블 */}
 			{/* <div className="mt-16 "> */}
@@ -294,6 +294,11 @@ export default async function PageRank() {
 					</tbody>
 				</table>
 			</div>
+			{/* 테이블 끝 */}
+
+			{/* 페이지네이션 */}
+			<Pagination></Pagination>
+			{/* 페이지네이션 끝 */}
 		</div>
 
 	)
