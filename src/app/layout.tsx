@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Gnb from "components/Gnb"
 
 import "styles/global.css"
+import Footer from "components/Footer";
 
 export const metadata: Metadata = {
   title: "모비랭크",
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body className="font-['Pretendard']">
         <Gnb />
         {children}
+        <Footer></Footer>
       </body>
     </html>
   );
