@@ -12,47 +12,149 @@ interface Rank {
 	power: string
 }
 
-const fetchPowerRank = async (): Promise<Rank[]> => {
-	try {
-		const response = await got('https://mabinogimobile.nexon.com/Ranking/List?t=1', {
-			headers: {
-				'authority': 'mabinogimobile.nexon.com',
-				// 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-				// 'accept-language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
-				'referer': 'https://mabinogimobile.nexon.com/Ranking/List?t=4',
-				// 'sec-ch-ua': '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
-				// 'sec-ch-ua-mobile': '?0',
-				// 'sec-ch-ua-platform': '"Windows"',
-				// 'sec-fetch-dest': 'document',
-				// 'sec-fetch-mode': 'navigate',
-				// 'sec-fetch-site': 'same-origin',
-				// 'sec-fetch-user': '?1',
-				// 'upgrade-insecure-requests': '1',
-				'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
-			},
-			http2: true,
-		});
+const Type = {
+	power: 1,
+	charm: 2,
+	living: 3,
+	mix: 4
+} as const;
 
-		const $ = cheerio.load(response.body);
-		const rankingList: Rank[] = []
+const Server = {
+	dayan: 1,
+	ira: 2,
+	duncan: 3,
+	alisa: 4,
+	maven: 5,
+	lasa: 6,
+	calix: 7
+} as const;
 
-		$('li.item').each((_i, el) => {
-			const $dl = $(el).find('div > dl');
+const Class = {
+	all: 0
+} as const;
 
-			rankingList.push({
-				rank: $dl.eq(0).find('dt').text().trim(),
-				server: $dl.eq(1).find('dd').text().trim(),
-				name: $dl.eq(2).find('dd').text().trim(),
-				class: $dl.eq(3).find('dd').text().trim(),
-				power: $dl.eq(4).find('dd').text().trim().replace(/,/g, ''),
-			})
-		})
+interface FetchRank {
+	type: (typeof Type)[keyof typeof Type],
+	server: (typeof Server)[keyof typeof Server],
+	page: number,
+	search?: string
+}
+const sleep = (ms?: number) => {
+	return new Promise<void>(resolve => {
+		const max = 1000;
+		const min = 500
+		const time = ms ?? Math.floor(Math.random() * (max - min) + min);
 
-		return rankingList;
-	} catch (error) {
-		console.error(error);
-		throw error;
+		setTimeout(() => {
+			console.log('hi timeout!:', time)
+			resolve();
+		}, time);
+	})
+}
+const getAllServerRank = async () => {
+	const serverKeys = ['ira'];
+	// const serverKeys = Object.keys(Server);
+	const page = 1;
+	let allData: Rank[] = []
+
+	console.log(serverKeys)
+	for (const server of serverKeys) {
+		console.log(server)
+		for (let pageIndex = 1; pageIndex <= page; pageIndex++) {
+
+			try {
+				console.log(pageIndex)
+				const body = {
+					type: Type.power,
+					server: Server[server as keyof typeof Server],
+					page: pageIndex
+				}
+				const response = await fetchRank(body);
+				// console.log(response)
+				allData = [...allData, ...response];
+
+				// 429 방지를 위한 매 요청 사이 짧은 휴식
+				await sleep()
+
+			} catch (error: any) {
+				if (error.response?.statusCode === 429) {
+					console.error('차단 감지! 1분간 중단합니다.');
+					await sleep(60000); // 1분 대기 후 다음 시도
+					pageIndex--; // 현재 페이지 다시 시도
+				} else {
+					console.error(`에러 발생 (${server}, ${page}):`, error.message);
+				}
+			}
+		}
+
+		// 서버 한 개 끝날 때마다 조금 더 긴 휴식
+		await sleep(2000);
 	}
+	return allData;
+}
+
+// test()
+
+const fetchRank = async (body: FetchRank): Promise<Rank[]> => {
+	// console.log('body: ', body);
+	const response = await got.post(' https://mabinogimobile.nexon.com/Ranking/List/rankdata', {
+		// const response = await got.post('https://mabinogimobile.nexon.com/Ranking/List?t=1', {
+		form: {
+			t: body.type,
+			pageno: body.page,
+			s: body.server,
+			c: 0,
+			search: ''
+		},
+		hooks: {
+			beforeRequest: [
+				options => {
+					console.log('--- 실제 전송되는 데이터 ---');
+					console.log('Body:', options.body);
+				}
+			]
+		},
+		// cache: false, // 캐시 사용 안 함
+		headers: {
+			'authority': 'mabinogimobile.nexon.com', 'x-requested-with': 'XMLHttpRequest',
+			// 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+			// 'accept-language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+			'referer': 'https://mabinogimobile.nexon.com/Ranking/List?t=1',
+			// 'sec-ch-ua': '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
+			// 'sec-ch-ua-mobile': '?0',
+			// 'sec-ch-ua-platform': '"Windows"',
+			// 'sec-fetch-dest': 'document',
+			// 'sec-fetch-mode': 'navigate',
+			// 'sec-fetch-site': 'same-origin',
+			// 'sec-fetch-user': '?1',
+			// 'upgrade-insecure-requests': '1',
+			'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
+			'cookie': '',
+			// 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+		},
+		http2: true,
+	});
+
+
+	// console.log(response.body)
+
+	const $ = cheerio.load(response.body);
+	const rankingList: Rank[] = []
+
+	$('li.item').each((_i, el) => {
+		const $dl = $(el).find('div > dl');
+
+		rankingList.push({
+			rank: $dl.eq(0).find('dt').text().trim(),
+			server: $dl.eq(1).find('dd').text().trim(),
+			name: $dl.eq(2).find('dd').text().trim(),
+			class: $dl.eq(3).find('dd').text().trim(),
+			power: $dl.eq(4).find('dd').text().trim().replace(/,/g, ''),
+		})
+	})
+
+	console.log(rankingList)
+	return rankingList;
 }
 
 let cachedData: Rank[];
@@ -213,7 +315,8 @@ const getRankingData = async (): Promise<Rank[]> => {
 				power: '67249'
 			}
 		];
-		// cachedData = await fetchPowerRank();
+
+		// cachedData = await getAllServerRank();
 		lastFetchTime = now;
 		console.log('새로운 데이터 반환', cachedData.length, lastFetchTime)
 		return cachedData;
@@ -225,7 +328,6 @@ const getRankingData = async (): Promise<Rank[]> => {
 		throw error;
 	}
 }
-
 
 
 export default async function PageRank() {
@@ -246,6 +348,7 @@ export default async function PageRank() {
 						height={56}
 						objectFit='cover'
 						objectPosition='center'
+						unoptimized
 						className='absolute left-6 -top-12'
 					></Image>
 					<span className='ml-40 text-[36px] font-bold'>전투력 랭킹</span>
