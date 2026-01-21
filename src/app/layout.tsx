@@ -18,7 +18,9 @@ export default function RootLayout({
     <html >
       <body className="font-['Pretendard']">
         <Gnb />
-        {children}
+        <div className="relative z-1">
+          {children}
+        </div>
         <Footer></Footer>
       </body>
     </html>
