@@ -1,8 +1,9 @@
 import * as cheerio from 'cheerio';
 import Pagination from 'components/Pagination';
 import got from 'got';
+import { CookieJar } from 'tough-cookie'
+import puppeteer from 'puppeteer';
 import Image from 'next/image';
-
 
 interface Rank {
 	rank: string
@@ -57,13 +58,13 @@ const getAllServerRank = async () => {
 	const page = 1;
 	let allData: Rank[] = []
 
-	console.log(serverKeys)
+	console.log('serverKeys: ', serverKeys)
 	for (const server of serverKeys) {
 		console.log(server)
 		for (let pageIndex = 1; pageIndex <= page; pageIndex++) {
 
 			try {
-				console.log(pageIndex)
+				console.log('pageIndex: ', pageIndex)
 				const body = {
 					type: Type.power,
 					server: Server[server as keyof typeof Server],
@@ -93,13 +94,62 @@ const getAllServerRank = async () => {
 	return allData;
 }
 
-// test()
+const warmUpCookies = async () => {
+	/* mabinogimobile api 요청 시 쿠키값을 포함해야 한다. 안그러면 리다이렉트된 결과값을 받음.
+	set-cookie 이외로 생성되는 쿠키값이 필요하여 모든 쿠키를 수집해야 한다. 
+	그리고 api에서 필요로 하는 쿠키값들의 도메인을 살펴보니 특정 도메인만 필요로 하는 것 같아 필터링해주었다.
+	*/
 
+	const browser = await puppeteer.launch({ headless: 'shell' });
+	const page = await browser.newPage();
+	await page.goto('https://mabinogimobile.nexon.com')
+
+	// 모든 쿠키 가져오기 (JS가 생성한 것 포함)
+	const cookies = await browser.cookies();
+	const jar = new CookieJar();
+
+	for (const cookie of cookies) {
+		if (cookie.domain === '.nexon.com' || cookie.domain === '.mabinogimobile.nexon.com') {
+			const cookieString = `${cookie.name}=${cookie.value}; Domain=${cookie.domain}; Path=${cookie.path};`
+			await jar.setCookie(cookieString, 'https://mabinogimobile.nexon.com/');
+		}
+	}
+	await browser.close();
+	return jar;
+}
+const getRankingListFromHtml = (responseBody: any): Rank[] => {
+
+	const $ = cheerio.load(responseBody);
+	const rankingList: Rank[] = []
+
+	$('li.item').each((_i, el) => {
+		const $dl = $(el).find('div > dl');
+
+		rankingList.push({
+			rank: $dl.eq(0).find('dt').text().trim(),
+			server: $dl.eq(1).find('dd').text().trim(),
+			name: $dl.eq(2).find('dd').text().trim(),
+			class: $dl.eq(3).find('dd').text().trim(),
+			power: $dl.eq(4).find('dd').text().trim().replace(/,/g, ''),
+		})
+	})
+
+	console.log(rankingList)
+	return rankingList
+}
 const fetchRank = async (body: FetchRank): Promise<Rank[]> => {
 	// console.log('body: ', body);
-	const response = await got.post(' https://mabinogimobile.nexon.com/Ranking/List/rankdata', {
+
+	// 쿠키 수집
+	const cookieJar = await warmUpCookies();
+
+	// 공통 옵션 설정
+	const client = got.extend({ cookieJar })
+
+	// api 호출
+	const response = await client.post('https://mabinogimobile.nexon.com/Ranking/List/rankdata', {
 		// const response = await got.post('https://mabinogimobile.nexon.com/Ranking/List?t=1', {
-		form: {
+		json: {
 			t: body.type,
 			pageno: body.page,
 			s: body.server,
@@ -129,31 +179,15 @@ const fetchRank = async (body: FetchRank): Promise<Rank[]> => {
 			// 'sec-fetch-user': '?1',
 			// 'upgrade-insecure-requests': '1',
 			'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
-			'cookie': '',
+			// 'cookie': '_mlcs=MLCP.1.1767623607105.6; PCID=17676236077445177608219; _ga=GA1.3.492297027.1767623608; _atrk_siteuid=T37TsltVdKc7NWQt; appier_utmz=%7B%22csr%22%3A%22mabinogimobile.nexon.com%22%2C%22timestamp%22%3A1767623609%2C%22lcsr%22%3A%22mabinogimobile.nexon.com%22%7D; _mlcp=MLCP.1.1764240601969.680225652; tk_key=eyJhdWlkIjoiYjMzODFjMzIzMTFmNjY2YzdmNTM2YWQzMTkzYTFlMGM4ZmI0MDZkIiwiaXAiOiIxODMuOTYuMTEwLjExMy43NzE3NyJ9; _hjSessionUser_1327448=eyJpZCI6ImE2MWM0ZTNmLTE4YmMtNWY3ZC1hMzNiLTg0NmM1YTIzNzU0ZSIsImNyZWF0ZWQiOjE3Njc2MjM2MDk4OTQsImV4aXN0aW5nIjp0cnVlfQ==; _mlup_v2=W3sicGl4ZWxJZCI6Im54dC1WVXczaVNxTiIsInV0bVBhcmFtcyI6eyJ1dG1fc291cmNlIjoibmV4b24iLCJ1dG1fbWVkaXVtIjoiaG9tZWJhbm5lciIsInV0bV9jYW1wYWlnbiI6IjEyMDRfbnBheSIsInV0bV9jb250ZW50IjoiaG9tZWJhbm5lcl9uX25wYXltYWluX3BjIn0sImNyZWF0aW9uVGltZSI6IjE3NjgzOTQ4NDk1MzAifV0=; _wp_uid=1-de70d5a7a311cf4265a74c8a43f09433-s1640151283.306000|windows_10|chrome-1vb5cx; mmenc=; mmcreators=; _cfuvid=ARTKJWktg2iWInldyHmMua9WiLQLMJ3j89DRkxu.5DQ-1769001510.7613266-1.0.1.1-pMrkIJ2Kb0QHqzQ0PcoF_UdYew_tQUL9qVyCcVmuOt4; _iflocale=ko-KR; _ifplatform=krpc; isCafe=false; appier_random_unique_id_ViewLanding_7bc7=HItIYZmduzSGtzDlqzBZgz; _gid=GA1.2.1221283240.1769001516; _ifplatform_selector=krpc; A2SK=act:17690061666053580755; _hjSession_1327448=eyJpZCI6IjhiMGIzMTMwLTg3NDUtNDFkZC04M2FiLWQyNDAxN2VhMTYwMyIsImMiOjE3NjkwMDYxNjcxNzIsInMiOjEsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; appier_page_isView_PageView_e482=3100798a40ee18ee3a42f8cae954a08a99ed8c8bd1016e68cbf24506265d5b4d; appier_pv_counterViewTwoPages_34cf=0; appier_page_isView_ViewTwoPages_34cf=3100798a40ee18ee3a42f8cae954a08a99ed8c8bd1016e68cbf24506265d5b4d; mmtoken=wRH9xHdXLEIvMsk2wthaz1z2N5t946F8YNsAPH8YpTi8-Zj2pezDUfCsO_Z3nI1MOq4uB_hXcqddQPAwJGyDPfP2mdZoa1rMjZrMgI3XxLc1:4aCK0d2eAKbyZvMdKljMzuYlgYa3Upno2NGQ9DNk6eY9JaorAw3_x0xBHKG6dqZreRrzHSl0AVLFwuK1aFLqTlDQEDcwhNgwaWrzs9S-9Mo1; __cf_bm=3G3cTL73TbNOtYF_B199JL52_bZl9b5kT7CQ0hPZOzQ-1769008851.7191799-1.0.1.1-U2YT63FZrLL7GBnVW3nZ.8nEprowcS2WTCaSedbZZqB2B_6HKGwjkuDGOsJ95_6jn6pD8vbxOUBV.uOBD4m3AsfRIjTwZzKsv1b4akdW5s15aAdm1R4GUklvQoE8vsrl; _atrk_ssid=NQ5sJmBfytaluQdCrXo2F3; _ga_8R8GW9WJK8=GS2.3.s1769008855$o35$g1$t1769008856$j59$l0$h0; _gcl_au=1.3.250775469.1767623608.1587909721.1769008857.1769008856; appier_pv_counterPageView_e482=3; _ga_XXRXJ82MRH=GS2.3.s1769008855$o35$g1$t1769008856$j59$l0$h0; t_se_id=0bcc7146-4bf7-48aa-aad2-3b117a5426da; t_u_so=google; t_u_me=organic; _atrk_sessidx=5; gnbLogo=null; _mlss=W3sicGl4ZWxJZCI6Im54dC1WVXczaVNxTiIsInNlc3Npb25JZCI6IjE3NjkwMDg4NTczMzZfN2ViMzkyYjI1MWRkNGFjZSIsInNlc3Npb25TdGFydFRpbWVzdGFtcCI6MTc2OTAwODg1NzMzNiwic2Vzc2lvbkxhc3RBY3RpdmVUaW1lc3RhbXAiOjE3NjkwMDg4NTczMzZ9XQ==; _mlss=W3sicGl4ZWxJZCI6Im54dC1WVXczaVNxTiIsInNlc3Npb25JZCI6IjE3NjkwMDg4NTczMzZfN2ViMzkyYjI1MWRkNGFjZSIsInNlc3Npb25TdGFydFRpbWVzdGFtcCI6MTc2OTAwODg1NzMzNiwic2Vzc2lvbkxhc3RBY3RpdmVUaW1lc3RhbXAiOjE3NjkwMDg4NTczMzZ9XQ==; _mlss=W3sicGl4ZWxJZCI6Im54dC1WVXczaVNxTiIsInNlc3Npb25JZCI6IjE3NjkwMDg4NTczMzZfN2ViMzkyYjI1MWRkNGFjZSIsInNlc3Npb25TdGFydFRpbWVzdGFtcCI6MTc2OTAwODg1NzMzNiwic2Vzc2lvbkxhc3RBY3RpdmVUaW1lc3RhbXAiOjE3NjkwMDg4NTczMzZ9XQ==; cto_bundle=7d9eCl85JTJCRkNqSCUyQks3RFJ3V1hnelpydnVCTGFYNzlaczRVJTJCWE5nY1k3Wk1JamR1V205JTJCTjRvd2xhNGR5WVduMmllNFR5bXVNenVmVElPOHNTMXRzSTl0TjJBTGhrTnBLSE5raGsyeFBRRE8xNFM0b0FGVm9Ia0F0NVpyMmNvNjJlVE9sNlZxU0UlMkJ0ZzlLR0VscVVVOTRSOWV3JTNEJTNE; _gat_UA-116900215-1=1; _gat_UA-136873854-1=1; _ga=GA1.1.492297027.1767623608; _ga_G8E41RL4PQ=GS2.1.s1769008855$o36$g1$t1769008857$j58$l0$h0; _ga_0M230TCW98=GS1.1.1769008855.22.1.1769008858.0.0.0',
 			// 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
 		},
 		http2: true,
 	});
-
-
+	console.log('실제 나간 요청 헤더:', response.request.options.headers.cookie);
 	// console.log(response.body)
 
-	const $ = cheerio.load(response.body);
-	const rankingList: Rank[] = []
-
-	$('li.item').each((_i, el) => {
-		const $dl = $(el).find('div > dl');
-
-		rankingList.push({
-			rank: $dl.eq(0).find('dt').text().trim(),
-			server: $dl.eq(1).find('dd').text().trim(),
-			name: $dl.eq(2).find('dd').text().trim(),
-			class: $dl.eq(3).find('dd').text().trim(),
-			power: $dl.eq(4).find('dd').text().trim().replace(/,/g, ''),
-		})
-	})
-
-	console.log(rankingList)
+	const rankingList = getRankingListFromHtml(response.body)
 	return rankingList;
 }
 
@@ -161,8 +195,18 @@ let cachedData: Rank[];
 let lastFetchTime: number;
 const CACHE_DURATION = 1000 * 60 * 3;
 // const CACHE_DURATION = 30 * 60 * 1000;
-const getRankingData = async (): Promise<Rank[]> => {
+const getCachedRankingData = async (): Promise<Rank[]> => {
+
+	// const matchingCookies = await cookieJar.getCookies('https://mabinogimobile.nexon.com/')
+	// console.log('matchingCookies: ', matchingCookies)
+
+	// const res = await got('https://mabinogimobile.nexon.com/');
+	// console.log('res: ', res);
+	// const cookies = headers['set-cookie'] || [];
+	// console.log(cookies); // Array of cookie strings
+
 	// console.log('1', cachedData, lastFetchTime)
+
 	const now = Date.now();
 
 	// 캐시가 있고, 30분이 지나지 않았다면 저장된 데이터 반환
@@ -316,7 +360,7 @@ const getRankingData = async (): Promise<Rank[]> => {
 			}
 		];
 
-		// cachedData = await getAllServerRank();
+		cachedData = await getAllServerRank();
 		lastFetchTime = now;
 		console.log('새로운 데이터 반환', cachedData.length, lastFetchTime)
 		return cachedData;
@@ -332,7 +376,7 @@ const getRankingData = async (): Promise<Rank[]> => {
 
 export default async function PageRank() {
 	// const rankingList = await fetchPowerRank()
-	const rankingList = await getRankingData();
+	const rankingList = await getCachedRankingData();
 
 	const inputValue = ''
 

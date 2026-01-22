@@ -13,8 +13,10 @@
     "cheerio": "^1.1.2",
     "got": "^14.6.6",
     "next": "16.0.6",
+    "puppeteer": "^24.36.0",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "tough-cookie": "^6.0.0"
   },
   "devDependencies": {
     "@iconify-json/tabler": "^1.2.26",
