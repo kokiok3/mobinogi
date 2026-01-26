@@ -1,9 +1,20 @@
 "use client"
 
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react"
 
 export default function Pagination() {
 	const [currentPage, setPage] = useState(1);
+	useEffect(() => { handleRouter() }, [currentPage])
+
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const handleRouter = () => {
+		const params = new URLSearchParams(searchParams);
+		params.set('page', currentPage.toString());
+		router.push(`?${params.toString()}`)
+	}
+
 	const handlePageClick = (page: number | 'first' | 'last' | 'prev' | 'next') => {
 		if (page === 'first') {
 			setPage(1);
@@ -19,9 +30,9 @@ export default function Pagination() {
 		}
 		else {
 			setPage(page);
-
 		}
 	}
+
 
 	const getCurrentPage = (page: number) => {
 		return page === currentPage ? 'page' : 'false'
