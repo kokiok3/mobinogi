@@ -1,5 +1,5 @@
 import express from 'express';
-import mobinogiRouter from '#src/routes/mobinogi.ts'
+import mobinogiRouter from '#src/routes/rankRoute.ts'
 const app = express();
 
 
