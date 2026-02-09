@@ -5,6 +5,6 @@
     "main": "./index.ts",
     "type": "./index.ts",
     "imports": {
-        "#shared/*": "./shared/*"
+        "#shared/*": "./*"
     }
 }

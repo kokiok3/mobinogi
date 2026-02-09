@@ -1,38 +1,5 @@
-interface Rank {
-    rank?: string
-    server: string
-    name: string
-    class: string
-    power: string
-}
+import { Rank, Type, Server, FetchRank } from '@mobinogi/shared';
 
-const Type = {
-    power: 1,
-    charm: 2,
-    living: 3,
-    mix: 4
-} as const;
-
-const Server = {
-    dayan: 1,
-    ira: 2,
-    duncan: 3,
-    alisa: 4,
-    maven: 5,
-    lasa: 6,
-    calix: 7
-} as const;
-
-const Class = {
-    all: 0
-} as const;
-
-interface FetchRank {
-    type: (typeof Type)[keyof typeof Type],
-    server: (typeof Server)[keyof typeof Server],
-    page: number,
-    search?: string
-}
 
 const fetchRankingData = async () => {
     const response = await fetch('http://localhost:8000/mobinogi');

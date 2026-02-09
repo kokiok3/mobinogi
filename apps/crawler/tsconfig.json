@@ -16,7 +16,8 @@
         "./src/*"
       ],
       "@mobinogi/shared": [
-        "../../packages/shared/types/rankType.ts"
+        "../../packages/shared/index.ts",
+        "../../packages/shared/*"
       ]
     }
   },
