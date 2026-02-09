@@ -1,5 +1,5 @@
 import { redisClient } from '#src/redis.ts';
-import { Rank } from '#src/type/rankType.ts';
+import { Rank } from '@mobinogi/shared';
 
 export const getRankData = async (): Promise<Rank[]> => {
     const rankingPower: string | null = await redisClient.get('rankingPower');

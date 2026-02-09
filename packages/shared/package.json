@@ -1,0 +1,10 @@
+{
+    "name": "@mobinogi/shared",
+    "version": "0.1.0",
+    "private": true,
+    "main": "./index.ts",
+    "type": "./index.ts",
+    "imports": {
+        "#shared/*": "./shared/*"
+    }
+}

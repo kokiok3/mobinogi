@@ -1,5 +1,5 @@
 {
-  "name": "mobinogi",
+  "name": "mobinogi-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -20,7 +20,8 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "redis": "^5.10.0",
-    "tough-cookie": "^6.0.0"
+    "tough-cookie": "^6.0.0",
+    "@mobinogi/shared": "*"
   },
   "devDependencies": {
     "@iconify-json/tabler": "^1.2.26",

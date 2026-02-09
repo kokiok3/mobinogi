@@ -1,0 +1,12 @@
+{
+    "name": "mobinogi-monorepo",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "dev:web": "npm run dev -w apps/web",
+        "dev:crawler": "npm run node -w apps/crawler"
+    }
+}

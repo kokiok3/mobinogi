@@ -10,12 +10,14 @@
     "emitDeclarationOnly": true,
     "declaration": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
       "#src/*": [
         "./src/*"
       ],
+      "@mobinogi/shared": [
+        "../../packages/shared/types/rankType.ts"
+      ]
     }
   },
   "include": [

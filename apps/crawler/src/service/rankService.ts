@@ -2,10 +2,9 @@ import * as cheerio from 'cheerio';
 import got from 'got';
 import { CookieJar } from 'tough-cookie'
 import puppeteer from 'puppeteer';
-import { Rank, Type, Server, FetchRank } from '#src/type/rankType.ts';
 import cron from 'node-cron';
 import { setRankData } from '#src/models/rankModel.ts';
-
+import { Rank, Type, Server, FetchRank } from '@mobinogi/shared';
 
 
 const extractRankingListFromHtml = (responseBody: any): Rank[] => {
