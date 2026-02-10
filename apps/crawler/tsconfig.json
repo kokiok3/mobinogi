@@ -16,7 +16,6 @@
         "./src/*"
       ],
       "@mobinogi/shared": [
-        "../../packages/shared/index.ts",
         "../../packages/shared/*"
       ]
     }
