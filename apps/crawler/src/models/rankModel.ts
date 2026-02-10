@@ -1,11 +1,25 @@
 import { redisClient } from '#src/redis.ts';
-import { Rank } from '@mobinogi/shared';
+import { Rank, TYPE } from '@mobinogi/shared';
 
-export const getRankData = async (): Promise<Rank[]> => {
-    const rankingPower: string | null = await redisClient.get('rankingPower');
-    const rankingPowerList = rankingPower ? JSON.parse(rankingPower) : []
+export const getRankData = async (type: any): Promise<Rank[]> => {
+    let getKey;
+    switch (type) {
+        case TYPE.power: getKey = 'rankingPower';
+            break;
+        case TYPE.charm: getKey = 'rankingCharm';
+            break;
+        case TYPE.living: getKey = 'rankingLiving';
+            break;
+        case TYPE.mix: getKey = 'rankingMix';
+            break;
+        default: getKey = 'rankingPower';
+    }
 
-    return rankingPowerList;
+
+    const rankingValue: string | null = await redisClient.get(getKey);
+    const rankingList = rankingValue ? JSON.parse(rankingValue) : []
+
+    return rankingList;
 }
 export const setRankData = async (data: string): Promise<void> => {
     console.log('setRankingData')

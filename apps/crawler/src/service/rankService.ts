@@ -4,7 +4,7 @@ import { CookieJar } from 'tough-cookie'
 import puppeteer from 'puppeteer';
 import cron from 'node-cron';
 import { setRankData } from '#src/models/rankModel.ts';
-import { Rank, Type, Server, FetchRank } from '@mobinogi/shared';
+import { Rank, TYPE, SERVER, FetchRank } from '@mobinogi/shared';
 
 
 const extractRankingListFromHtml = (responseBody: any): Rank[] => {
@@ -102,7 +102,7 @@ const sleep = (ms?: number) => {
     })
 }
 export const getAllServerRank = async (): Promise<Rank[]> => {
-    const serverKeys = Object.keys(Server);
+    const serverKeys = Object.keys(SERVER);
     // const page = 8;
     const page = 1;
     let allData: Rank[] = []
@@ -114,8 +114,8 @@ export const getAllServerRank = async (): Promise<Rank[]> => {
             try {
                 console.log('pageIndex: ', pageIndex)
                 const body = {
-                    type: Type.power,
-                    server: Server[server as keyof typeof Server],
+                    type: TYPE.power,
+                    server: SERVER[server as keyof typeof SERVER],
                     page: pageIndex
                 }
                 const response = await fetchRank(body);

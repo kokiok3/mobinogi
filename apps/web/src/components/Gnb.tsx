@@ -1,15 +1,18 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import LogoIcon from "assets/icons/LogoIcon"
+import { TYPE, Type } from "@mobinogi/shared"
 
-const MENU = [{ name: '전투력', path: '/rank' }, { name: '매력', path: '/rank-charm' }, { name: '생활', path: '/rank-living' }, { name: '종합', path: 'rank-total' }]
+const MENU = [{ name: '전투력', path: '/rank', query: { t: TYPE.power } }, { name: '매력', path: '/rank', query: { t: TYPE.charm } }, { name: '생활', path: '/rank', query: { t: TYPE.living } }, { name: '종합', path: '/rank', query: { t: TYPE.mix } }]
 
 export default function Navigation() {
-    const currentPath = usePathname();
-    const getMenuStyle = (path: string) => {
-        const isActive = currentPath === path;
+    const searchParams = useSearchParams()
+    const queryType = searchParams.get('t') as Type;
+
+    const getMenuStyle = (type: Type) => {
+        const isActive = queryType === type;
 
         return {
             text: `flex items-center w-full h-full px-12  text-[16px]  ${isActive ? 'text-black' : ''}`,
@@ -32,12 +35,12 @@ export default function Navigation() {
             <ul className="flex gap-20 h-full">
                 {
                     MENU.map((menu) => {
-                        const style = getMenuStyle(menu.path);
+                        const style = getMenuStyle(menu.query.t);
 
                         return (
 
                             <li key={menu.name} className="group relative flex items-center h-full text-gray-500 cursor-pointer ">
-                                <Link href={menu.path} className={style.text}>{menu.name}</Link>
+                                <Link href={`${menu.path}?t=${menu.query?.t}`} className={style.text}>{menu.name}</Link>
                                 <span className={style.bar}></span>
                             </li>
 

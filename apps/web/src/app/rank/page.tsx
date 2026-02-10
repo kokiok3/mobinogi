@@ -1,11 +1,14 @@
+import { Type } from '@mobinogi/shared';
 import Pagination from 'components/Pagination';
 import RankingTable from 'components/RankingTable';
 import Search from 'components/Search';
 import Image from 'next/image';
 
 
-export default async function PageRank({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
+export default async function PageRank({ searchParams }: { searchParams: Promise<{ page?: string, t: Type }> }) {
+
 	const currentPage = Number((await searchParams).page) || 1;
+	const currentType = (await searchParams).t;
 
 	return (
 		<div className="mt-60 px-200">
@@ -36,7 +39,7 @@ export default async function PageRank({ searchParams }: { searchParams: Promise
 			{/* 테이블 헤더 끝 */}
 
 			{/* 테이블 */}
-			<RankingTable page={currentPage}></RankingTable>
+			<RankingTable page={currentPage} type={currentType}></RankingTable>
 			{/* 테이블 끝 */}
 
 			{/* 페이지네이션 */}
