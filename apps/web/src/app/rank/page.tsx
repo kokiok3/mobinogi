@@ -1,31 +1,79 @@
-import { Type } from '@mobinogi/shared';
+import { TYPE, Type, TYPE_KOREAN, TypeKorean } from '@mobinogi/shared';
 import Pagination from 'components/Pagination';
 import RankingTable from 'components/RankingTable';
 import Search from 'components/Search';
 import Image from 'next/image';
+import Sword from "assets/images/sword.gif"
+import Crown from "assets/images/crown.gif"
+import Fish from "assets/images/fish.gif"
+import Trophy from "assets/images/trophy.gif"
 
 
 export default async function PageRank({ searchParams }: { searchParams: Promise<{ page?: string, t: Type }> }) {
 
-	const currentPage = Number((await searchParams).page) || 1;
-	const currentType = (await searchParams).t;
+	const params = await searchParams;
+
+	const currentPage = Number(params.page) || 1;
+	const currentType = params.t;
+
+	const typeKorean: TypeKorean = TYPE_KOREAN[params.t]
 
 	return (
 		<div className="mt-60 px-200">
 			{/* 타이틀 */}
 			<div className=''>
 				<div className='relative flex flex-col items-center gap-14 w-fit mx-auto'>
-					<Image
-						src='/sword.gif'
-						alt='test'
-						width={56}
-						height={56}
-						objectFit='cover'
-						objectPosition='center'
-						unoptimized
-						className='absolute left-6 -top-12'
-					></Image>
-					<span className='ml-40 text-[36px] font-bold'>전투력 랭킹</span>
+					{currentType === TYPE.power &&
+						<Image
+							src={Sword}
+							alt='검 애니메이션 아이콘'
+							width={56}
+							height={56}
+							objectFit='cover'
+							objectPosition='center'
+							unoptimized
+							className='absolute left-6 -top-12'
+							data-source="https://www.flaticon.com/kr/free-animated-icons/"
+						></Image>
+
+					}
+					{currentType === TYPE.charm &&
+						<Image
+							src={Crown}
+							alt='왕관 애니메이션 아이콘'
+							width={56}
+							height={56}
+							objectFit='cover'
+							objectPosition='center'
+							unoptimized
+							className='absolute left-16 -top-12'
+							data-source="https://www.flaticon.com/kr/free-animated-icons/"
+						></Image>}
+					{currentType === TYPE.living &&
+						<Image
+							src={Fish}
+							alt='물고기 애니메이션 아이콘'
+							width={54}
+							height={54}
+							objectFit='cover'
+							objectPosition='center'
+							unoptimized
+							className='absolute left-22 -top-10'
+							data-source="https://www.flaticon.com/kr/free-animated-icons/"
+						></Image>}
+					{currentType === TYPE.mix &&
+						<Image
+							src={Trophy}
+							alt='트로피 애니메이션 아이콘'
+							width={50}
+							height={50}
+							objectFit='cover'
+							objectPosition='center'
+							unoptimized
+							className='absolute left-19 -top-6'
+							data-source="https://www.flaticon.com/kr/free-animated-icons/"
+						></Image>}
+					<span className='ml-40 text-[36px] font-bold'>{typeKorean} 랭킹</span>
 					<span className='text-[16px] font-medium text-gray-500'>1위부터 1,000위까지 랭킹을 확인하세요.</span>
 				</div>
 			</div>
