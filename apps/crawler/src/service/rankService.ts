@@ -3,7 +3,7 @@ import got from 'got';
 import { CookieJar } from 'tough-cookie'
 import puppeteer from 'puppeteer';
 import cron from 'node-cron';
-import { setRankData } from '#src/models/rankModel.ts';
+import { setRankData } from '#src/models/rankModel';
 import { Rank, TYPE, SERVER, FetchRank } from '@mobinogi/shared';
 
 

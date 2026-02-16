@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { ApiResponse } from '#src/type/responseType.ts';
-import { getRankData } from '#src/models/rankModel.ts';
+import { ApiResponse } from '#src/type/responseType';
+import { getRankData } from '#src/models/rankModel';
 import { FetchRankQuery } from '@mobinogi/shared';
 
 const router = Router();

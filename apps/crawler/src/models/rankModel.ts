@@ -1,4 +1,4 @@
-import { redisClient } from '#src/redis.ts';
+import { redisClient } from '#src/redis';
 import { Rank, TYPE } from '@mobinogi/shared';
 
 export const getRankData = async (type: any): Promise<Rank[]> => {
