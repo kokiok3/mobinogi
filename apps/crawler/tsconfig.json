@@ -5,29 +5,27 @@
     "moduleResolution": "bundler",
     "strict": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "allowImportingTsExtensions": true,
-    "emitDeclarationOnly": true,
-    "declaration": true,
-    "outDir": "./dist",
+    "outDir": "./dist", /* 빌드 결과물 저장 위치 */
+    "rootDir": "../../",
     "baseUrl": ".",
     "paths": {
       "#src/*": [
         "./src/*"
       ],
       "@mobinogi/shared": [
-        "packages/shared/index.ts"
+        "../../packages/shared/index.ts"
       ],
       "@mobinogi/shared/*": [
-        "packages/shared/*"
+        "../../packages/shared/*"
       ]
     }
   },
   "include": [
-    "src/**/*.ts",
-    "**/*.ts"
+    "src/**/*",
+    "../../packages/shared/**/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }

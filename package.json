@@ -8,7 +8,8 @@
     "scripts": {
         "dev:web": "npm run dev -w apps/web",
         "build:web": "npm run build -w apps/web",
-        "dev:crawler": "npm run node -w apps/crawler"
+        "dev:crawler": "npm run node -w apps/crawler",
+        "build:crawler": "npm run build -w apps/crawler"
     },
     "devDependencies": {
         "turbo": "^2.8.9"
