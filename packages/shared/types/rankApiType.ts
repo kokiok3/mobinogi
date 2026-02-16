@@ -1,4 +1,4 @@
-import { Type } from '@mobinogi/shared';
+import type { Type } from './rankType';
 
 export interface FetchRankQuery {
     t: Type

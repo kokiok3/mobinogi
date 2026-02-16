@@ -1,2 +1,2 @@
-export * from '#shared/types/rankType'
-export * from '#shared/types/rankApiType'
+export * from './types/rankType'
+export * from './types/rankApiType'

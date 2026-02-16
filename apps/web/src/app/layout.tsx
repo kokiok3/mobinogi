@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import Gnb from "components/Gnb"
+import { Suspense } from "react";
+import Gnb from "@/components/Gnb"
 
-import "styles/global.css"
-import Footer from "components/Footer";
+import "@/styles/global.css"
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "모비랭크",
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html >
       <body className="font-['Pretendard']">
-        <Gnb />
+        <Suspense fallback={<nav className="sticky top-0 z-2 flex items-center mx-auto justify-center w-full h-55 bg-white" />}>
+          <Gnb />
+        </Suspense>
         <div className="relative z-1">
           {children}
         </div>

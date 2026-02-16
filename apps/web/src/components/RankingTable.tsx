@@ -1,7 +1,7 @@
 import { Rank, FetchRankQuery, Type } from '@mobinogi/shared';
-import GoldMedal from "assets/images/gold-medal.png"
-import SilverMedal from "assets/images/silver-medal.png"
-import BronzeMedal from "assets/images/bronze-medal.png"
+import GoldMedal from "@/assets/images/gold-medal.png"
+import SilverMedal from "@/assets/images/silver-medal.png"
+import BronzeMedal from "@/assets/images/bronze-medal.png"
 import Image from 'next/image';
 
 
