@@ -9,7 +9,8 @@ const fetchRankingData = async (type: Type) => {
     const query: FetchRankQuery = { t: type }
     const queryString = new URLSearchParams(query as unknown as Record<string, string>).toString();
 
-    const response = await fetch(`http://localhost:8000/mobinogi?${queryString}`);
+    const response = await fetch(`
+${process.env.NEXT_PUBLIC_API_URL}/?${queryString}`);
     const data = await response.json();
     return data.data;
 }
