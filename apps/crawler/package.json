@@ -24,7 +24,8 @@
     "nodemon": "^3.1.11",
     "puppeteer": "^24.36.0",
     "redis": "^5.10.0",
-    "tough-cookie": "^6.0.0"
+    "tough-cookie": "^6.0.0",
+    "vercel": "^50.18.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
