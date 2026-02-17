@@ -5,12 +5,11 @@
   "imports": {
     "#src/*": "./src/*"
   },
-  "type": "module",
   "scripts": {
     "node": "tsx watch src/app.ts",
     "lint": "eslint",
     "build": "npx tsc --project tsconfig.json",
-    "build2": "esbuild src/app.ts --bundle --platform=node --target=node24.11.1 --outfile=dist/app.js"
+    "build2": "esbuild src/app.ts --bundle --platform=node --target=node24.11.1 --outfile=dist/app.js --format=cjs"
   },
   "dependencies": {
     "@mobinogi/shared": "*",
