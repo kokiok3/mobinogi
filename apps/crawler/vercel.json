@@ -5,5 +5,6 @@
             "source": "/(.*)",
             "destination": "dist/app.js"
         }
-    ]
+    ],
+    "outputDirectory": "dist"
 }
