@@ -5,8 +5,11 @@ import { FetchRankQuery } from '@mobinogi/shared';
 
 const router = Router();
 
+router.get('/', (req, res) => {
+    res.json({ message: 'Hello from Express on Vercel!' });
+});
 
-router.get("/", async (req: Request<{}, {}, {}, FetchRankQuery>, res: Response) => {
+router.get("/rank", async (req: Request<{}, {}, {}, FetchRankQuery>, res: Response) => {
     const query: FetchRankQuery = req.query;
     const type = query.t;
     try {
