@@ -10,8 +10,9 @@
     "node": "tsx watch src/app.ts",
     "lint": "eslint",
     "build": "npx tsc --project tsconfig.json",
-    "build2": "esbuild src/app.ts --bundle --platform=node --target=node24 --outfile=dist/app.js --format=cjs",
-    "start": "node dist/app.js"
+    "build2": "esbuild src/app.ts --bundle --platform=node --target=node24 --outfile=api/index.js --format=cjs --external:express",
+    "start": "node dist/app.js",
+    "vercel": "npx vercel dev --listen 8000"
   },
   "dependencies": {
     "@mobinogi/shared": "*",
