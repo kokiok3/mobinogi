@@ -1,4 +1,9 @@
 {
+    "functions": {
+        "dist/index.js": {
+            "runtime": "vercel-node@latest"
+        }
+    },
     "rewrites": [
         {
             "source": "/(.*)",
