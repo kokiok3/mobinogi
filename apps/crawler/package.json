@@ -5,13 +5,13 @@
   "imports": {
     "#src/*": "./src/*"
   },
-  "main": "api/index.js",
+  "main": "dist/app.js",
   "scripts": {
     "node": "tsx watch src/app.ts",
     "lint": "eslint",
     "build": "npx tsc --project tsconfig.json",
-    "build2": "esbuild src/app.ts --bundle --platform=node --target=node24 --outfile=api/index.js --format=cjs --external:express && mkdir public",
-    "start": "node api/index.js",
+    "build2": "esbuild src/app.ts --bundle --platform=node --target=node24 --outfile=dist/app.js --format=cjs",
+    "start": "node dist/app.js",
     "vercel": "npx vercel dev --listen 8000"
   },
   "dependencies": {
@@ -20,7 +20,7 @@
     "cheerio": "^1.1.2",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "got": "^14.6.6",
+    "got": "^11.8.6",
     "node-cron": "^4.2.1",
     "nodemon": "^3.1.11",
     "puppeteer": "^24.36.0",

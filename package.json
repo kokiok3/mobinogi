@@ -6,11 +6,12 @@
         "packages/*"
     ],
     "scripts": {
-        "dev:web": "npm run dev -w apps/web",
-        "build:web": "npm run build -w apps/web",
-        "dev:crawler": "npm run node -w apps/crawler",
-        "build:crawler": "npm run build -w apps/crawler",
-        "build:crawler2": "npm run build2 -w apps/crawler"
+        "dev:w": "npm run dev -w apps/web",
+        "build:w": "npm run build -w apps/web",
+        "dev:c": "npm run node -w apps/crawler",
+        "build:c": "npm run build -w apps/crawler",
+        "build:c2": "npm run build2 -w apps/crawler",
+        "start:c": "npm run start -w apps/crawler"
     },
     "devDependencies": {
         "turbo": "^2.8.9"
