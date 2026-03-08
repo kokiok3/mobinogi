@@ -1,9 +1,10 @@
 import express from 'express';
 import mobinogiRouter from '#src/routes/rankRoute'
+import { cronRanking } from '#src/service/cronService';
+
 const app = express();
 
 
-const dev = process.env.NODE_ENV !== 'production';
 const PORT = 8000;
 
 app.use('/', mobinogiRouter);

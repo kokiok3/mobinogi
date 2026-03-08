@@ -2,7 +2,6 @@ import * as cheerio from 'cheerio';
 import got from 'got';
 import { CookieJar } from 'tough-cookie'
 import puppeteer from 'puppeteer';
-import cron from 'node-cron';
 import { setRankData } from '#src/models/rankModel';
 import { Rank, TYPE, SERVER, FetchRank } from '@mobinogi/shared';
 
@@ -147,13 +146,3 @@ const sortRankByPower = (rankingList: Rank[]) => {
     const descendingList = rankingList.sort((a, b) => +(b.power) - +(a.power));
     return descendingList;
 }
-
-// cron 
-// 초(선택) 분 시 일 달 주
-cron.schedule('* * * * *', async () => {
-    console.log('running a task every minute');
-    const rankingList: Rank[] = await getAllServerRank();
-    // console.log('crontab:', rankingList)
-
-    setRankData(JSON.stringify(rankingList));
-});
