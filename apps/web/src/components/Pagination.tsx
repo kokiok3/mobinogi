@@ -1,9 +1,14 @@
 "use client"
 
+import { Type, TYPE } from "@mobinogi/shared";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react"
 
-export default function Pagination() {
+export default function Pagination({ type }: { type: Type }) {
+	useEffect(() => {
+		setPage(1)
+	}, [type])
+
 	const [currentPage, setPage] = useState(1);
 	useEffect(() => { handleRouter() }, [currentPage])
 
@@ -11,6 +16,8 @@ export default function Pagination() {
 	const searchParams = useSearchParams();
 	const handleRouter = () => {
 		const params = new URLSearchParams(searchParams);
+
+		// router에 파라미터 추가
 		params.set('page', currentPage.toString());
 		router.push(`?${params.toString()}`)
 	}

@@ -91,7 +91,7 @@ export default async function PageRank({ searchParams }: { searchParams: Promise
 			{/* 테이블 끝 */}
 
 			{/* 페이지네이션 */}
-			<Pagination ></Pagination>
+			<Pagination type={currentType}></Pagination>
 			{/* 페이지네이션 끝 */}
 		</div>
 
