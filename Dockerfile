@@ -56,7 +56,7 @@ RUN npm install
 COPY . .
 
 # 빌드실행
-RUN npm run build:c
+RUN npm run build:c2
 
 # 실행
 EXPOSE 8000

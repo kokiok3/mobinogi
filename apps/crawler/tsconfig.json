@@ -6,7 +6,7 @@
     "strict": true,
     "esModuleInterop": true,
     "outDir": "./dist", /* 빌드 결과물 저장 위치 */
-    "rootDir": "../../",
+    "rootDir": "../../", //'rootDir' is expected to contain all source files.
     "baseUrl": ".",
     "paths": {
       "#src/*": [

@@ -1,0 +1,14 @@
+services:
+  crawler:
+    build: .
+    env_file:
+      - ./apps/crawler/.env.crawler.production  # 로컬의 .env 파일을 컨테이너 내부로 주입
+    # 또는 직접 지정
+    environment:
+    # 환경변수 직접 주입할 때 사용
+      - NODE_ENV=production
+    #   - REDIS_PW=${REDIS_PW}
+    #   - REDIS_PROXY_DOMAIN=${REDIS_PROXY_DOMAIN}
+    #   - REDIS_PORT=${REDIS_PORT}
+    ports:
+      - 8000:8000

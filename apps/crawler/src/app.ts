@@ -12,4 +12,10 @@ app.listen(PORT, (err) => {
     console.info(`Ready on http://localhost:${PORT}`);
 })
 
+cronRanking();
+
+console.log('--- PROCESS ENV CHECK ---');
+console.log('REDIS_HOST FROM ENV:', process.env.REDIS_PROXY_DOMAIN);
+console.log('--------------------------');
+
 export default app;
