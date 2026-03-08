@@ -1,7 +1,8 @@
 import { Request, Response, Router } from 'express';
 import { ApiResponse } from '#src/type/responseType';
-import { getRankData } from '#src/models/rankModel';
-import { FetchRankQuery } from '@mobinogi/shared';
+import { getRankData, setRankData } from '#src/models/rankModel';
+import { FetchRankQuery, Rank } from '@mobinogi/shared';
+import { getAllServerRank } from '#src/service/rankService';
 
 const router = Router();
 
@@ -22,5 +23,13 @@ router.get("/rank", async (req: Request<{}, {}, {}, FetchRankQuery>, res: Respon
         res.status(500).json(errorResponse);
     }
 });
+
+router.post("/rank", async (req: Request<{}, {}, {}, FetchRankQuery>, res: Response) => {
+    const query: FetchRankQuery = req.query;
+    const type = query.t;
+    const rankingList: Rank[] = await getAllServerRank();
+
+    setRankData(type, rankingList);
+})
 
 export default router;

@@ -2,8 +2,7 @@ import * as cheerio from 'cheerio';
 import got from 'got';
 import { CookieJar } from 'tough-cookie'
 import puppeteer from 'puppeteer';
-import { setRankData } from '#src/models/rankModel';
-import { Rank, TYPE, SERVER, FetchRank } from '@mobinogi/shared';
+import { Rank, TYPE, SERVER, FetchRank, Type } from '@mobinogi/shared';
 
 
 const extractRankingListFromHtml = (responseBody: any): Rank[] => {
@@ -145,4 +144,21 @@ export const getAllServerRank = async (): Promise<Rank[]> => {
 const sortRankByPower = (rankingList: Rank[]) => {
     const descendingList = rankingList.sort((a, b) => +(b.power) - +(a.power));
     return descendingList;
+}
+
+export const getRankingType = (type: Type) => {
+    let getKey;
+    switch (type) {
+        case TYPE.power: getKey = 'rankingPower';
+            break;
+        case TYPE.charm: getKey = 'rankingCharm';
+            break;
+        case TYPE.living: getKey = 'rankingLiving';
+            break;
+        case TYPE.mix: getKey = 'rankingMix';
+            break;
+        default: getKey = 'rankingPower';
+    }
+
+    return getKey;
 }
