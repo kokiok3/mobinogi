@@ -57,7 +57,6 @@ export default function Pagination({ type }: { type: Type }) {
 					{Array.from({ length: 10 }, (_e, i) => {
 						return (
 							<button key={i} type="button" className="btn btn-xs btn-soft btn-square aria-[current='page']:text-white aria-[current='page']:bg-orange" aria-current={setCurrentPageStyle(i)} onClick={() => handlePageClick(i)}>{getPage(i)}</button>
-							// <button type="button" className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary" aria-current="page">2</button>
 						)
 					})}
 				</div>

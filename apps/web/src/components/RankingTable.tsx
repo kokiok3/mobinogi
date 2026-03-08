@@ -9,8 +9,6 @@ const fetchRankingData = async (type: Type) => {
     const query: FetchRankQuery = { t: type }
     const queryString = new URLSearchParams(query as unknown as Record<string, string>).toString();
 
-    //     const response = await fetch(`
-    // https://mobinogi-crawler.vercel.app/rank?${queryString}`);
     const response = await fetch(`
     ${process.env.NEXT_PUBLIC_API_URL}/rank?${queryString}`);
     const data = await response.json();
