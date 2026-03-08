@@ -29,13 +29,18 @@ export default function Pagination() {
 			setPage(currentPage + 1);
 		}
 		else {
-			setPage(page);
+			setPage(getPage(page));
 		}
 	}
 
 
-	const getCurrentPage = (page: number) => {
-		return page === currentPage ? 'page' : 'false'
+	const setCurrentPageStyle = (i: number) => {
+		return getPage(i) === currentPage ? 'page' : 'false'
+	}
+
+	const getPage = (i: number) => {
+		const offset = Math.trunc((currentPage - 1) / 10) * 10; // 십의 자리 수 추출
+		return offset + i + 1;
 	}
 
 	return (
@@ -44,7 +49,7 @@ export default function Pagination() {
 				<div className="flex items-center gap-x-8">
 					{Array.from({ length: 10 }, (_e, i) => {
 						return (
-							<button key={i} type="button" className="btn btn-xs btn-soft btn-square aria-[current='page']:text-white aria-[current='page']:bg-orange" aria-current={getCurrentPage(i + 1)} onClick={() => handlePageClick(i + 1)}>{i + 1}</button>
+							<button key={i} type="button" className="btn btn-xs btn-soft btn-square aria-[current='page']:text-white aria-[current='page']:bg-orange" aria-current={setCurrentPageStyle(i)} onClick={() => handlePageClick(i)}>{getPage(i)}</button>
 							// <button type="button" className="btn btn-soft btn-square aria-[current='page']:text-bg-soft-primary" aria-current="page">2</button>
 						)
 					})}
