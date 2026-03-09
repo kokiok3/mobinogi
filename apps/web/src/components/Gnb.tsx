@@ -9,7 +9,7 @@ const MENU = [{ name: '전투력', path: '/rank', query: { t: TYPE.power } }, { 
 
 export default function Navigation() {
     const searchParams = useSearchParams()
-    const queryType = searchParams.get('t') as Type;
+    const queryType = searchParams.get('t') as Type || TYPE.power;
 
     const getMenuStyle = (type: Type) => {
         const isActive = queryType === type;
@@ -27,9 +27,7 @@ export default function Navigation() {
 
                 <div className="flex flex-col font-extrabold">
                     <span className="text-base">모비랭크</span>
-                    <span className="text-orange text-xs leading-none
-">mobi rank</span>
-
+                    <span className="text-orange text-xs leading-none">mobi rank</span>
                 </div>
             </Link>
             <ul className="flex gap-20 h-full">
