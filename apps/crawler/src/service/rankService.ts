@@ -4,6 +4,7 @@ import { CookieJar } from 'tough-cookie'
 import puppeteer from 'puppeteer';
 import { Rank, TYPE, SERVER, FetchRank, Type } from '@mobinogi/shared';
 
+let cookieJar: CookieJar;
 
 const extractRankingListFromHtml = (responseBody: any): Rank[] => {
 
@@ -49,9 +50,6 @@ const warmUpCookies = async () => {
     return jar;
 }
 export const fetchRank = async (body: FetchRank): Promise<Rank[]> => {
-    // 쿠키 수집
-    const cookieJar = await warmUpCookies();
-
     // 공통 옵션 설정
     const client = got.extend({ cookieJar })
 
@@ -104,6 +102,9 @@ export const getAllServerRank = async (): Promise<Rank[]> => {
     // const page = 8;
     const page = 1;
     let allData: Rank[] = []
+
+    // 쿠키 수집
+    cookieJar = await warmUpCookies();
 
     for (const server of serverKeys) {
         console.log(server)
