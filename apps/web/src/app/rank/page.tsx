@@ -14,9 +14,9 @@ export default async function PageRank({ searchParams }: { searchParams: Promise
 	const params = await searchParams;
 
 	const currentPage = Number(params.page) || 1;
-	const currentType = params.t;
+	const currentType = params.t || TYPE.power;
 
-	const typeKorean: TypeKorean = TYPE_KOREAN[params.t]
+	const typeKorean: TypeKorean = TYPE_KOREAN[currentType]
 
 	return (
 		<div className="mt-60 px-200">
