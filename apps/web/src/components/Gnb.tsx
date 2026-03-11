@@ -21,7 +21,7 @@ export default function Navigation() {
     }
 
     return (
-        <nav className="sticky top-0 z-2 flex items-center mx-auto justify-center w-full h-55 bg-white ">
+        <nav className="sticky top-0 z-0 flex items-center mx-auto justify-center w-full h-55 bg-white ">
             <Link href={'/'} className="absolute left-50 flex  items-center gap-9 ">
                 <LogoIcon />
 
