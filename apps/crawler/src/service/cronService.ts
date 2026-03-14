@@ -8,18 +8,29 @@ import { setRankData } from '#src/models/rankModel';
 export const cronRanking = () => {
     cron.schedule('0 * * * *', async () => {
         try {
-            // 모든 타입 반복
-            for (const [keys, value] of Object.entries(TYPE)) {
-                if (value === TYPE.mix) return;
 
-                console.time()
-                const rankingList: Rank[] = await getAllServerRank(value);
+            const powerList: Rank[] = await getAllServerRank(TYPE.power);
+            setRankData(TYPE.power, powerList);
 
-                console.log(TYPE_KOREAN[value])
-                console.timeEnd()
+        } catch (error) {
+            console.log('crontab Error:', error)
+        }
+    }, { timezone: 'Asia/Seoul' });
 
-                setRankData(value, rankingList);
-            }
+    cron.schedule('0 * * * *', async () => {
+        try {
+            const charmList: Rank[] = await getAllServerRank(TYPE.charm);
+            setRankData(TYPE.charm, charmList);
+
+        } catch (error) {
+            console.log('crontab Error:', error)
+        }
+    }, { timezone: 'Asia/Seoul' });
+
+    cron.schedule('0 * * * *', async () => {
+        try {
+            const livingList: Rank[] = await getAllServerRank(TYPE.living);
+            setRankData(TYPE.living, livingList);
 
         } catch (error) {
             console.log('crontab Error:', error)
