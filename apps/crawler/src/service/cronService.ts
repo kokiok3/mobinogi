@@ -1,4 +1,4 @@
-import { Rank, TYPE } from '@mobinogi/shared';
+import { Rank, TYPE, TYPE_KOREAN } from '@mobinogi/shared';
 import cron from 'node-cron';
 import { getAllServerRank } from '#src/service/rankService';
 import { setRankData } from '#src/models/rankModel';
@@ -10,9 +10,12 @@ export const cronRanking = () => {
         try {
             // 모든 타입 반복
             for (const [keys, value] of Object.entries(TYPE)) {
+                if (value === TYPE.mix) return;
 
                 console.time()
                 const rankingList: Rank[] = await getAllServerRank(value);
+
+                console.log(TYPE_KOREAN[value])
                 console.timeEnd()
 
                 setRankData(value, rankingList);

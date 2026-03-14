@@ -10,7 +10,7 @@ export const TYPE_KOREAN = {
     [TYPE.power]: '전투력',
     [TYPE.charm]: '매력',
     [TYPE.living]: '생활',
-    // [TYPE.mix]: '종합'
+    [TYPE.mix]: '종합'
 }
 export type TypeKorean = (typeof TYPE_KOREAN)[keyof typeof TYPE_KOREAN]
 
