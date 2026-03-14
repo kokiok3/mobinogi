@@ -1,89 +1,68 @@
 import * as cheerio from 'cheerio';
-import got from 'got';
-import { CookieJar } from 'tough-cookie'
-import puppeteer from 'puppeteer';
+import puppeteer, { Page } from 'puppeteer';
 import { Rank, TYPE, SERVER, FetchRank, Type } from '@mobinogi/shared';
 
-let cookieJar: CookieJar;
-
 const extractRankingListFromHtml = (responseBody: any): Rank[] => {
+    try {
 
-    const $ = cheerio.load(responseBody);
-    const rankingList: Rank[] = []
+        const $ = cheerio.load(responseBody);
+        const rankingList: Rank[] = []
 
-    $('li.item').each((_i, el) => {
-        const $dl = $(el).find('div > dl');
+        $('li.item').each((_i, el) => {
+            const $dl = $(el).find('div > dl');
 
-        rankingList.push({
-            // rank: $dl.eq(0).find('dt').text().trim(),
-            server: $dl.eq(1).find('dd').text().trim(),
-            name: $dl.eq(2).find('dd').text().trim(),
-            class: $dl.eq(3).find('dd').text().trim(),
-            power: $dl.eq(4).find('dd').text().trim().replace(/,/g, ''),
+            rankingList.push({
+                // rank: $dl.eq(0).find('dt').text().trim(),
+                server: $dl.eq(1).find('dd').text().trim(),
+                name: $dl.eq(2).find('dd').text().trim(),
+                class: $dl.eq(3).find('dd').text().trim(),
+                power: $dl.eq(4).find('dd').text().trim().replace(/,/g, ''),
+            })
         })
-    })
 
-    return rankingList
-}
-const warmUpCookies = async () => {
-    /* mabinogimobile api 요청 시 쿠키값을 포함해야 한다. 안그러면 리다이렉트된 결과값을 받음.
-    set-cookie 이외로 생성되는 쿠키값이 필요하여 모든 쿠키를 수집해야 한다. 
-    그리고 api에서 필요로 하는 쿠키값들의 도메인을 살펴보니 특정 도메인만 필요로 하는 것 같아 필터링해주었다.
-    */
-
-    const browser = await puppeteer.launch({ headless: 'shell' });
-    const page = await browser.newPage();
-    await page.goto('https://mabinogimobile.nexon.com')
-
-    // 모든 쿠키 가져오기 (JS가 생성한 것 포함)
-    const cookies = await browser.cookies();
-    const jar = new CookieJar();
-
-    for (const cookie of cookies) {
-        if (cookie.domain === '.nexon.com' || cookie.domain === '.mabinogimobile.nexon.com') {
-            const cookieString = `${cookie.name}=${cookie.value}; Domain=${cookie.domain}; Path=${cookie.path};`
-            await jar.setCookie(cookieString, 'https://mabinogimobile.nexon.com/');
-        }
+        return rankingList
+    } catch (error) {
+        console.log('extractRankingListFromHtml 에러', error)
+        throw error;
     }
-
-    await browser.close();
-    return jar;
 }
-export const fetchRank = async (body: FetchRank): Promise<Rank[]> => {
-    // 쿠키 수집
-    cookieJar = await warmUpCookies();
-    const client = got.extend({ cookieJar })
 
-    // api 호출
-    const response = await client.post('https://mabinogimobile.nexon.com/Ranking/List/rankdata', {
-        // const response = await got.post('https://mabinogimobile.nexon.com/Ranking/List?t=1', {
-        json: {
-            t: body.type,
-            pageno: body.page,
-            s: body.server,
-            c: 0,
-            search: ''
-        },
-        // hooks: {
-        //     beforeRequest: [
-        //         options => {
-        //             console.log('--- 실제 전송되는 데이터 ---');
-        //             console.log('Body:', options.body);
-        //         }
-        //     ]
-        // },
-        // cache: false, // 캐시 사용 안 함
-        headers: {
-            'authority': 'mabinogimobile.nexon.com', 'x-requested-with': 'XMLHttpRequest',
-            'referer': 'https://mabinogimobile.nexon.com/Ranking/List?t=1',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
-        },
-        http2: true,
-    });
-    // console.log('실제 나간 요청 헤더:', response.request.options.headers.cookie);
+export const fetchRank = async (page: Page, body: FetchRank): Promise<Rank[]> => {
 
-    const rankingList = extractRankingListFromHtml(response.body)
-    return rankingList;
+    try {
+        // 1. 먼저 페이지에 접속하여 쿠키 및 세션을 확보
+        await page.goto('https://mabinogimobile.nexon.com/Ranking/List/rankdata', {
+            waitUntil: 'networkidle2', // 페이지 로딩이 완전히 끝날 때까지 대기
+        })
+
+        // 2. 브라우저 내부에서 직접 fetch(AJAX)를 실행합
+        // 이 방식은 브라우저의 모든 헤더와 쿠키를 그대로 사용하므로 403을 피할 가능성이 매우 높습니다.
+        const result = await page.evaluate(async (body) => {
+            const response = await fetch('https://mabinogimobile.nexon.com/Ranking/List/rankdata', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-requested-with': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    t: body.type,
+                    pageno: body.page,
+                    s: body.server,
+                    c: 0,
+                    search: ''
+                })
+            });
+            return await response.text(); // HTML 문자열 반환
+        }, body);
+
+        // 3. 받아온 HTML에서 랭킹 리스트 추출
+        const rankingList = extractRankingListFromHtml(result);
+        return rankingList;
+
+    } catch (error) {
+        console.error('fetchRank 에러:', error);
+        throw error;
+    }
 }
 
 const randomTime = (min: number, max: number) => {
@@ -99,14 +78,26 @@ const sleep = (ms?: number) => {
         }, time);
     })
 }
+
+const launchBrowser = async () => {
+    const browser = await puppeteer.launch({
+        headless: 'shell',
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+
+    return page;
+}
 export const getAllServerRank = async (type: Type): Promise<Rank[]> => {
     const serverKeys = Object.keys(SERVER);
-    const page = 8;
+    const maxPage = 8;
     let allData: Rank[] = []
+    const page = await launchBrowser()
 
     for (const server of serverKeys) {
         console.log(server)
-        for (let pageIndex = 1; pageIndex <= page; pageIndex++) {
+        let pageIndex
+        for (pageIndex = 1; pageIndex <= maxPage; pageIndex++) {
 
             try {
                 console.log('pageIndex: ', pageIndex)
@@ -116,27 +107,30 @@ export const getAllServerRank = async (type: Type): Promise<Rank[]> => {
                     page: pageIndex
                 }
 
-                const response = await fetchRank(body);
-                // console.log(response)
+                const response = await fetchRank(page, body);
                 allData = [...allData, ...response];
 
                 // 429 방지를 위한 매 요청 사이 짧은 휴식
                 await sleep()
 
             } catch (error: any) {
+                await page.close();
+
                 if (error.response?.statusCode === 429) {
-                    console.error('차단 감지! 15분간 중단합니다.');
-                    throw error.message;
+                    console.error(`getAllServerRank 에러: 429: (${server}, ${pageIndex}):`);
+                    throw error;
                 } else {
-                    console.error(`에러 발생 (${server}, ${page}):`, error.message);
-                    throw error.message;
+                    console.error(`getAllServerRank 에러: (${server}, ${pageIndex}):`);
+                    throw error;
                 }
             }
         }
 
-        // 서버 한 개 끝날 때마다 조금 더 긴 휴식
+        // 서버 한 개 끝날 때마다 휴식
         await sleep(2000);
     }
+
+    await page.close();
 
     return sortRankByPower(allData);
 }
