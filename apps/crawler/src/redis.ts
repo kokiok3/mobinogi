@@ -7,8 +7,7 @@ if (dev) {
 }
 
 // Redis 연결
-// const redisClient = createClient() // 로컬 redis 연결 시 사용
-const redisClient = createClient({
+const redisClient = dev ? createClient() : createClient({
     url: `redis://default:${process.env.REDIS_PW}@${process.env.REDIS_PROXY_DOMAIN}:${process.env.REDIS_PORT}`
 })
 
