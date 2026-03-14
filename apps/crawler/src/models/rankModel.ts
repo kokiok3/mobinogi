@@ -19,7 +19,7 @@ export const setRankData = async (type: Type, data: Rank[]): Promise<void> => {
     try {
         const rankingKey = getRankingType(type);
         const result = await redisClient.set(rankingKey, JSON.stringify(data));
-        console.log('setRankingResult: ', result)
+        console.log('setRankingResult: ', rankingKey, result)
 
     } catch (error) {
         console.error('Error setting rank data: ', error);

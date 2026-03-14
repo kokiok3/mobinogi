@@ -10,7 +10,7 @@
     "node": "tsx watch src/app.ts",
     "lint": "eslint",
     "build": "npx tsc --project tsconfig.json",
-    "build2": "esbuild src/app.ts --bundle --platform=node --target=node24 --outfile=dist/app.js --format=cjs",
+    "build2": "node build.js",
     "start": "NODE_ENV=production node dist/app.js",
     "vercel": "npx vercel dev --listen 8000"
   },
@@ -21,12 +21,12 @@
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "got": "^11.8.6",
     "node-cron": "^4.2.1",
     "nodemon": "^3.1.11",
     "puppeteer": "^24.36.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "redis": "^5.10.0",
-    "tough-cookie": "^6.0.0",
     "vercel": "^50.18.0"
   },
   "devDependencies": {

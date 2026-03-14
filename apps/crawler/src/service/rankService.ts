@@ -1,6 +1,10 @@
 import * as cheerio from 'cheerio';
-import puppeteer, { Page } from 'puppeteer';
+import { Page } from 'puppeteer';
+import puppeteerExtra from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { Rank, TYPE, SERVER, FetchRank, Type } from '@mobinogi/shared';
+
+puppeteerExtra.use(StealthPlugin())
 
 const extractRankingListFromHtml = (responseBody: any): Rank[] => {
     try {
@@ -80,7 +84,7 @@ const sleep = (ms?: number) => {
 }
 
 const launchBrowser = async () => {
-    const browser = await puppeteer.launch({
+    const browser = await puppeteerExtra.launch({
         headless: 'shell',
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
