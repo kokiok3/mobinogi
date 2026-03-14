@@ -5,12 +5,9 @@ const dev = process.env.NODE_ENV !== 'production';
 if (dev) {
     dotenv.config({ path: '.env.crawler.local' });
 }
-//  else {
-//     dotenv.config();
-// }
 
 // Redis 연결
-// const redisClient = createClient() // 로컬 redist 연결 시 사용
+// const redisClient = createClient() // 로컬 redis 연결 시 사용
 const redisClient = createClient({
     url: `redis://default:${process.env.REDIS_PW}@${process.env.REDIS_PROXY_DOMAIN}:${process.env.REDIS_PORT}`
 })

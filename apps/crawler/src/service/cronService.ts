@@ -1,4 +1,4 @@
-import { Rank } from '@mobinogi/shared';
+import { Rank, TYPE } from '@mobinogi/shared';
 import cron from 'node-cron';
 import { getAllServerRank } from '#src/service/rankService';
 import { setRankData } from '#src/models/rankModel';
@@ -6,18 +6,20 @@ import { setRankData } from '#src/models/rankModel';
 // cron 
 // 초(선택) 분 시 일 달 주
 export const cronRanking = () => {
-    // cron.schedule('*/3 * * * * *', async () => {
-    cron.schedule('* * * * *', async () => {
-
+    cron.schedule('0 * * * *', async () => {
         try {
-            console.log('running a task every minute');
+            // 모든 타입 반복
+            for (const [keys, value] of Object.entries(TYPE)) {
 
-            // const rankingList: Rank[] = await getAllServerRank();
-            // console.log('crontab:', rankingList)
+                console.time()
+                const rankingList: Rank[] = await getAllServerRank(value);
+                console.timeEnd()
 
-            // setRankData(rankingList);
+                setRankData(value, rankingList);
+            }
+
         } catch (error) {
-
+            console.log('crontab Error:', error)
         }
     }, { timezone: 'Asia/Seoul' });
 }

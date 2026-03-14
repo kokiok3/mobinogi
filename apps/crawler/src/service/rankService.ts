@@ -50,7 +50,8 @@ const warmUpCookies = async () => {
     return jar;
 }
 export const fetchRank = async (body: FetchRank): Promise<Rank[]> => {
-    // 공통 옵션 설정
+    // 쿠키 수집
+    cookieJar = await warmUpCookies();
     const client = got.extend({ cookieJar })
 
     // api 호출
@@ -85,11 +86,12 @@ export const fetchRank = async (body: FetchRank): Promise<Rank[]> => {
     return rankingList;
 }
 
+const randomTime = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min) + min);
+}
 const sleep = (ms?: number) => {
     return new Promise<void>(resolve => {
-        const max = 1000;
-        const min = 500
-        const time = ms ?? Math.floor(Math.random() * (max - min) + min);
+        const time = ms ?? randomTime(500, 13000)
 
         setTimeout(() => {
             console.log('hi timeout!:', time)
@@ -97,14 +99,10 @@ const sleep = (ms?: number) => {
         }, time);
     })
 }
-export const getAllServerRank = async (): Promise<Rank[]> => {
+export const getAllServerRank = async (type: Type): Promise<Rank[]> => {
     const serverKeys = Object.keys(SERVER);
-    // const page = 8;
-    const page = 1;
+    const page = 8;
     let allData: Rank[] = []
-
-    // 쿠키 수집
-    cookieJar = await warmUpCookies();
 
     for (const server of serverKeys) {
         console.log(server)
@@ -113,10 +111,11 @@ export const getAllServerRank = async (): Promise<Rank[]> => {
             try {
                 console.log('pageIndex: ', pageIndex)
                 const body = {
-                    type: TYPE.power,
+                    type: type,
                     server: SERVER[server as keyof typeof SERVER],
                     page: pageIndex
                 }
+
                 const response = await fetchRank(body);
                 // console.log(response)
                 allData = [...allData, ...response];
@@ -126,11 +125,11 @@ export const getAllServerRank = async (): Promise<Rank[]> => {
 
             } catch (error: any) {
                 if (error.response?.statusCode === 429) {
-                    console.error('차단 감지! 1분간 중단합니다.');
-                    await sleep(60000); // 1분 대기 후 다음 시도
-                    pageIndex--; // 현재 페이지 다시 시도
+                    console.error('차단 감지! 15분간 중단합니다.');
+                    throw error.message;
                 } else {
                     console.error(`에러 발생 (${server}, ${page}):`, error.message);
+                    throw error.message;
                 }
             }
         }

@@ -27,7 +27,7 @@ router.get("/rank", async (req: Request<{}, {}, {}, FetchRankQuery>, res: Respon
 router.post("/rank", async (req: Request<{}, {}, {}, FetchRankQuery>, res: Response) => {
     const query: FetchRankQuery = req.query;
     const type = query.t;
-    const rankingList: Rank[] = await getAllServerRank();
+    const rankingList: Rank[] = await getAllServerRank(type);
 
     setRankData(type, rankingList);
 })

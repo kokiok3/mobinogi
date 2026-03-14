@@ -10,7 +10,7 @@ export const TYPE_KOREAN = {
     [TYPE.power]: '전투력',
     [TYPE.charm]: '매력',
     [TYPE.living]: '생활',
-    [TYPE.mix]: '종합'
+    // [TYPE.mix]: '종합'
 }
 export type TypeKorean = (typeof TYPE_KOREAN)[keyof typeof TYPE_KOREAN]
 
@@ -25,21 +25,12 @@ export interface Rank {
 export const SERVER = {
     dayan: 1,
     ira: 2,
-    // duncan: 3,
-    // alisa: 4,
-    // maven: 5,
-    // lasa: 6,
-    // calix: 7
+    duncan: 3,
+    alisa: 4,
+    maven: 5,
+    lasa: 6,
+    calix: 7
 } as const;
-// export const SERVER = {
-//     dayan: 1,
-//     ira: 2,
-//     duncan: 3,
-//     alisa: 4,
-//     maven: 5,
-//     lasa: 6,
-//     calix: 7
-// } as const;
 
 export const CLASS = {
     all: 0
