@@ -7,7 +7,6 @@ import { Rank, TYPE, SERVER, FetchRank, Type } from '@mobinogi/shared';
 puppeteerExtra.use(StealthPlugin())
 
 const extractRankingListFromHtml = (responseBody: any): Rank[] => {
-    console.log('extractRankingListFromHtml Start!!!!', responseBody)
     try {
 
         const $ = cheerio.load(responseBody);
@@ -25,7 +24,6 @@ const extractRankingListFromHtml = (responseBody: any): Rank[] => {
             })
         })
 
-        console.log('rankingList: ', rankingList)
         return rankingList
     } catch (error) {
         console.error('extractRankingListFromHtml 에러', error)
@@ -36,16 +34,12 @@ const extractRankingListFromHtml = (responseBody: any): Rank[] => {
 export const fetchRank = async (page: Page, body: FetchRank): Promise<Rank[]> => {
 
     try {
-        console.log('start fetchRank!!')
-
-        // 1. 먼저 페이지에 접속하여 쿠키 및 세션을 확보
-        await page.goto(`https://mabinogimobile.nexon.com/Ranking/List?t=${body.type}`)
+        // // 1. 먼저 페이지에 접속하여 쿠키 및 세션을 확보
+        // await page.goto(`https://mabinogimobile.nexon.com/Ranking/List?t=${body.type}`)
 
         // 2. 브라우저 내부에서 직접 fetch(AJAX)를 실행합
         // 이 방식은 브라우저의 모든 헤더와 쿠키를 그대로 사용하므로 403을 피할 가능성이 매우 높습니다.
         const result = await page.evaluate(async (body) => {
-            console.log('page.evalute: body값:')
-
             const response = await fetch('https://mabinogimobile.nexon.com/Ranking/List/rankdata', {
                 method: 'POST',
                 headers: {
@@ -96,7 +90,6 @@ const launchBrowser = async () => {
         });
         const page = await browser.newPage();
 
-        console.log('런치 브라우저: ', page)
         return page;
 
     } catch (error) {
@@ -105,11 +98,11 @@ const launchBrowser = async () => {
     }
 }
 export const getAllServerRank = async (type: Type): Promise<Rank[]> => {
-    const serverKeys = [1];
-    // const serverKeys = Object.keys(SERVER);
-    const maxPage = 1;
+    const serverKeys = Object.keys(SERVER);
+    const maxPage = 8;
     let allData: Rank[] = []
     const page = await launchBrowser()
+    await page.goto(`https://mabinogimobile.nexon.com/Ranking/List?t=${type}`)
 
     for (const server of serverKeys) {
         console.log(server)
