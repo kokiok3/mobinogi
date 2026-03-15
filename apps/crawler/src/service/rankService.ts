@@ -38,8 +38,8 @@ export const fetchRank = async (page: Page, body: FetchRank): Promise<Rank[]> =>
     try {
         console.log('start fetchRank!!')
 
-        // 1. 먼저 페이지에 접속하여 쿠키 및 세션을 확보
-        await page.goto('https://mabinogimobile.nexon.com/Ranking/List/rankdata')
+        // // 1. 먼저 페이지에 접속하여 쿠키 및 세션을 확보
+        // await page.goto(`https://mabinogimobile.nexon.com/Ranking/List?t=${body.type}`)
 
         // 2. 브라우저 내부에서 직접 fetch(AJAX)를 실행합
         // 이 방식은 브라우저의 모든 헤더와 쿠키를 그대로 사용하므로 403을 피할 가능성이 매우 높습니다.
@@ -61,7 +61,6 @@ export const fetchRank = async (page: Page, body: FetchRank): Promise<Rank[]> =>
                 })
             });
 
-            console.log('puppeteer response: ', response)
             return await response.text(); // HTML 문자열 반환
         }, body);
 
@@ -111,6 +110,8 @@ export const getAllServerRank = async (type: Type): Promise<Rank[]> => {
     const maxPage = 1;
     let allData: Rank[] = []
     const page = await launchBrowser()
+    // 1. 먼저 페이지에 접속하여 쿠키 및 세션을 확보
+    await page.goto(`https://mabinogimobile.nexon.com/Ranking/List?t=${type}`)
 
     for (const server of serverKeys) {
         console.log(server)
