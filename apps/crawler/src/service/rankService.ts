@@ -26,7 +26,7 @@ const extractRankingListFromHtml = (responseBody: any): Rank[] => {
 
         return rankingList
     } catch (error) {
-        console.log('extractRankingListFromHtml 에러', error)
+        console.error('extractRankingListFromHtml 에러', error)
         throw error;
     }
 }
@@ -56,6 +56,8 @@ export const fetchRank = async (page: Page, body: FetchRank): Promise<Rank[]> =>
                     search: ''
                 })
             });
+
+            console.log('puppeteer response: ', response)
             return await response.text(); // HTML 문자열 반환
         }, body);
 
@@ -93,8 +95,9 @@ const launchBrowser = async () => {
     return page;
 }
 export const getAllServerRank = async (type: Type): Promise<Rank[]> => {
-    const serverKeys = Object.keys(SERVER);
-    const maxPage = 8;
+    const serverKeys = [1];
+    // const serverKeys = Object.keys(SERVER);
+    const maxPage = 1;
     let allData: Rank[] = []
     const page = await launchBrowser()
 
@@ -107,7 +110,8 @@ export const getAllServerRank = async (type: Type): Promise<Rank[]> => {
                 console.log('pageIndex: ', pageIndex)
                 const body = {
                     type: type,
-                    server: SERVER[server as keyof typeof SERVER],
+                    server: SERVER.dayan,
+                    // server: SERVER[server as keyof typeof SERVER],
                     page: pageIndex
                 }
 

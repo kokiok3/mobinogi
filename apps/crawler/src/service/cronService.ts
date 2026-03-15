@@ -6,7 +6,7 @@ import { setRankData } from '#src/models/rankModel';
 // cron 
 // 초(선택) 분 시 일 달 주
 export const cronRanking = () => {
-    cron.schedule('45 * * * *', async () => {
+    cron.schedule('*/2 * * * *', async () => {
         try {
 
             const powerList: Rank[] = await getAllServerRank(TYPE.power);
