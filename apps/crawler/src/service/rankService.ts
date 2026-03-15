@@ -113,8 +113,7 @@ export const getAllServerRank = async (type: Type): Promise<Rank[]> => {
                 console.log('pageIndex: ', pageIndex)
                 const body = {
                     type: type,
-                    server: SERVER.dayan,
-                    // server: SERVER[server as keyof typeof SERVER],
+                    server: SERVER[server as keyof typeof SERVER],
                     page: pageIndex
                 }
 
