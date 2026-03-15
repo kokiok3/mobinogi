@@ -1,6 +1,6 @@
 import express from 'express';
 import mobinogiRouter from '#src/routes/rankRoute'
-import { cronRanking } from '#src/service/cronService';
+// import { cronRanking } from '#src/service/cronService';
 
 const app = express();
 
@@ -13,7 +13,7 @@ app.listen(PORT, (err) => {
     console.info(`Ready on http://localhost:${PORT}`);
 })
 
-cronRanking();
+// cronRanking();
 
 console.log('--- PROCESS ENV CHECK ---');
 console.log('REDIS_HOST FROM ENV:', process.env.REDIS_PROXY_DOMAIN);
