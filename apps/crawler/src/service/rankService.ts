@@ -7,7 +7,7 @@ import { Rank, TYPE, SERVER, FetchRank, Type } from '@mobinogi/shared';
 puppeteerExtra.use(StealthPlugin())
 
 const extractRankingListFromHtml = (responseBody: any): Rank[] => {
-    console.log('extractRankingListFromHtml Start!!!!')
+    console.log('extractRankingListFromHtml Start!!!!', responseBody)
     try {
 
         const $ = cheerio.load(responseBody);
@@ -90,13 +90,20 @@ const sleep = (ms?: number) => {
 }
 
 const launchBrowser = async () => {
-    const browser = await puppeteerExtra.launch({
-        headless: 'shell',
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
-    const page = await browser.newPage();
+    try {
+        const browser = await puppeteerExtra.launch({
+            headless: 'shell',
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        });
+        const page = await browser.newPage();
 
-    return page;
+        console.log('런치 브라우저: ', page)
+        return page;
+
+    } catch (error) {
+        console.error('런치 브라우저 에러: ', error);
+        throw error;
+    }
 }
 export const getAllServerRank = async (type: Type): Promise<Rank[]> => {
     const serverKeys = [1];
