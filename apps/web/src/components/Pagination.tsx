@@ -4,14 +4,24 @@ import { Type, TYPE } from "@mobinogi/shared";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react"
 
-export default function Pagination({ type }: { type: Type }) {
+export default function Pagination({ type, totalPage = 25, pageSize = 10 }: { type: Type, totalPage?: number, pageSize?: number }) {
+	// 페이지 초기화
 	useEffect(() => {
-		setPage(1)
+		setCurrentPage(1)
 	}, [type])
 
-	const [currentPage, setPage] = useState(1);
-	useEffect(() => { handleRouter() }, [currentPage])
+	// 페이지네이션
+	const [currentPage, setCurrentPage] = useState(1);
+	// 현재 페이지가 속한 그룹의 인덱스 계산 (0부터 시작)
+	const currentGroupIndex = Math.floor((currentPage - 1) / pageSize);
+	// 해당그룹의 시작과 끝 페이지 계산
+	const startPage = currentGroupIndex * pageSize + 1;
+	const endPage = Math.min(startPage + pageSize - 1, totalPage);
+	const pageToShow = Array.from({ length: endPage - startPage + 1 }, (_e, i) =>
+		i + startPage)
 
+	// 현재 페이지가 바뀌면 라우터 업데이트
+	useEffect(() => { handleRouter() }, [currentPage])
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const handleRouter = () => {
@@ -24,41 +34,37 @@ export default function Pagination({ type }: { type: Type }) {
 
 	const handlePageClick = (page: number | 'first' | 'last' | 'prev' | 'next') => {
 		if (page === 'first') {
-			setPage(1);
+			setCurrentPage(1);
 		}
 		else if (page === 'last') {
-			setPage(50);
+			setCurrentPage(25);
 		}
 		else if (page === 'prev') {
-			setPage(currentPage - 1);
+			setCurrentPage(currentPage - 1);
 		}
 		else if (page === 'next') {
-			setPage(currentPage + 1);
+			setCurrentPage(currentPage + 1);
 		}
 		else {
-			setPage(getPage(page));
+			setCurrentPage(page);
 		}
 	}
 
-
-	const setCurrentPageStyle = (i: number) => {
-		return getPage(i) === currentPage ? 'page' : 'false'
-	}
-
-	const getPage = (i: number) => {
-		const offset = Math.trunc((currentPage - 1) / 10) * 10; // 십의 자리 수 추출
-		return offset + i + 1;
+	const setCurrentPageStyle = (page: number) => {
+		return page === currentPage ? 'page' : 'false'
 	}
 
 	return (
 		<div className="flex flex-col items-center gap-8 mt-40 mb-100">
 			<nav className="flex items-center gap-x-8">
 				<div className="flex items-center gap-x-8">
-					{Array.from({ length: 10 }, (_e, i) => {
-						return (
-							<button key={i} type="button" className="btn btn-xs btn-soft btn-square aria-[current='page']:text-white aria-[current='page']:bg-orange" aria-current={setCurrentPageStyle(i)} onClick={() => handlePageClick(i)}>{getPage(i)}</button>
-						)
-					})}
+					{
+						pageToShow.map(page => {
+							return (
+								<button key={page} type="button" className="btn btn-xs btn-soft btn-square aria-[current='page']:text-white aria-[current='page']:bg-orange" aria-current={setCurrentPageStyle(page)} onClick={() => handlePageClick(page)}>{page}</button>
+							)
+						})
+					}
 				</div>
 			</nav>
 
