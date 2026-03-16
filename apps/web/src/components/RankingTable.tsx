@@ -4,7 +4,6 @@ import SilverMedal from "@/assets/images/silver-medal.png"
 import BronzeMedal from "@/assets/images/bronze-medal.png"
 import Image from 'next/image';
 
-
 const fetchRankingData = async (type: Type) => {
     const query: FetchRankQuery = { t: type }
     const queryString = new URLSearchParams(query as unknown as Record<string, string>).toString();
@@ -12,12 +11,13 @@ const fetchRankingData = async (type: Type) => {
     const response = await fetch(`
     ${process.env.NEXT_PUBLIC_API_URL}/rank?${queryString}`);
     const data = await response.json();
-    return data.data;
+
+    const count = 500;
+    return data.data.splice(0, count);
 }
 
 export default async function RankingTable({ page, type }: { page: number, type: Type }) {
     const rankingList = await fetchRankingData(type);
-    console.log('rankingList: ', rankingList)
 
     // page + 20개 자르기
     // 예를 들면 1페이지면 1~20, 2페이지면 21~ 40, 3페이지면 31~50
