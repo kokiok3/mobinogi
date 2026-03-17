@@ -19,10 +19,10 @@ export default function RankingTable({
     const startIndex = (page - 1) * 20
     const pagingList = list.slice(startIndex, startIndex + 20);
 
-    const isShowRank = (index: number) => {
-        return (index + 1 + startIndex === 1 ||
-            index + 1 + startIndex === 2 ||
-            index + 1 + startIndex === 3 ? 'hidden' : '')
+    const isShowRank = (rankOrder: number) => {
+        return (rankOrder === 1 ||
+            rankOrder === 2 ||
+            rankOrder === 3 ? 'hidden' : '')
     }
 
     return (
@@ -41,12 +41,12 @@ export default function RankingTable({
                     <tbody>
                         {pagingList.length === 0 ?
                             <tr ><td colSpan={5} className='py-42 text-center'>500위 내에 없어요 ㅜㅜ</td></tr>
-                            : pagingList?.map((rank: Rank, i: number) => {
+                            : pagingList?.map((rank: Rank) => {
                                 return (
                                     <tr key={rank.name} className="row-hover">
                                         <td className='py-42 relative text-center'>
                                             <div className='absolute top-1/2 left-1/2 -translate-1/2'>
-                                                {i + 1 + startIndex === 1 &&
+                                                {rank.rank === 1 &&
                                                     <Image
                                                         src={GoldMedal}
                                                         alt='금메달 이미지'
@@ -58,7 +58,7 @@ export default function RankingTable({
                                                         className='relative '
                                                         data-source="https://www.flaticon.com/kr/free-animated-icons/"
                                                     ></Image>}
-                                                {i + 1 + startIndex === 2 &&
+                                                {rank.rank === 2 &&
                                                     <Image
                                                         src={SilverMedal}
                                                         alt='은메달 이미지'
@@ -70,7 +70,7 @@ export default function RankingTable({
                                                         className='relative '
                                                         data-source="https://www.flaticon.com/kr/free-animated-icons/"
                                                     ></Image>}
-                                                {i + 1 + startIndex === 3 &&
+                                                {rank.rank === 3 &&
                                                     <Image
                                                         src={BronzeMedal}
                                                         alt='동메달 이미지'
@@ -83,7 +83,8 @@ export default function RankingTable({
                                                         data-source="https://www.flaticon.com/kr/free-animated-icons/"
                                                     ></Image>}
                                             </div>
-                                            <span className={isShowRank(i)}>{i + 1 + startIndex}</span>
+                                            <span className={isShowRank(rank.rank!)}>{rank.rank}</span>
+                                            {/* <span className={isShowRank(i)}>{i + 1 + startIndex}</span> */}
                                         </td>
                                         <td className='py-42'>{rank.server}</td>
                                         <td className='py-42'>{rank.name}</td>
@@ -98,11 +99,11 @@ export default function RankingTable({
 
             <div className='rank__list xl:hidden mt-16 px-30 bg-white'>
                 {pagingList.length === 0 ? <span className='py-50 text-center text-gray-500'>500위 내에 없어요 ㅜㅜ</span>
-                    : pagingList?.map((rank: Rank, i: number) => {
+                    : pagingList?.map((rank: Rank) => {
                         return (
                             <div key={rank.name} className='rank__item'>
                                 <div>
-                                    <div>{i + 1 + startIndex === 1 &&
+                                    <div>{rank.rank === 1 &&
                                         <Image
                                             src={GoldMedal}
                                             alt='금메달 이미지'
@@ -114,7 +115,7 @@ export default function RankingTable({
                                             className='relative '
                                             data-source="https://www.flaticon.com/kr/free-animated-icons/"
                                         ></Image>}
-                                        {i + 1 + startIndex === 2 &&
+                                        {rank.rank === 2 &&
                                             <Image
                                                 src={SilverMedal}
                                                 alt='은메달 이미지'
@@ -126,7 +127,7 @@ export default function RankingTable({
                                                 className='relative '
                                                 data-source="https://www.flaticon.com/kr/free-animated-icons/"
                                             ></Image>}
-                                        {i + 1 + startIndex === 3 &&
+                                        {rank.rank === 3 &&
                                             <Image
                                                 src={BronzeMedal}
                                                 alt='동메달 이미지'
@@ -138,7 +139,7 @@ export default function RankingTable({
                                                 className='relative '
                                                 data-source="https://www.flaticon.com/kr/free-animated-icons/"
                                             ></Image>}
-                                        <span className={isShowRank(i)}>{i + 1 + startIndex}</span>
+                                        <span className={isShowRank(rank.rank!)}>{rank.rank}</span>
                                     </div>
                                 </div>
                                 <div className='rank__info'>

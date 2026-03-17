@@ -15,7 +15,7 @@ export const TYPE_KOREAN = {
 export type TypeKorean = (typeof TYPE_KOREAN)[keyof typeof TYPE_KOREAN]
 
 export interface Rank {
-    rank?: string
+    rank?: number
     server: string
     name: string
     class: string
