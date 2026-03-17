@@ -1,11 +1,8 @@
 @import "tailwindcss";
+@import "./rank.css";
 @plugin "flyonui";
 @plugin "@iconify/tailwind4";
 @config "../../tailwind.config.mjs";
-
-html {
-    scroll-behavior: smooth;
-}
 
 body {
     line-height: 1;

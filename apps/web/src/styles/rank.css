@@ -1,0 +1,28 @@
+@layer components {
+    .gnb {
+        /* 모바일 기본 스타일 */
+        @apply sticky top-0 z-4 flex items-center justify-between w-full h-55 px-50 bg-white;
+
+        /* 데스크탑 (1280px 초과) 스타일만 묶기 */
+        @media (min-width: 1280px) {
+            @apply mx-auto;
+        }
+    }
+
+    .gnb__menu__desktop {
+        @apply hidden;
+
+        @media (min-width: 1280px) {
+            @apply absolute left-[50%] -translate-x-[50%] m-auto flex gap-20 h-full;
+        }
+    }
+
+    .gnb__menu__mobile {
+        /* @apply w-40 h-40; */
+        @apply inline-flex;
+
+        @media (min-width: 1280px) {
+            @apply hidden;
+        }
+    }
+}
