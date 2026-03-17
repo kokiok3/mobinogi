@@ -4,14 +4,32 @@ import { Type, TYPE } from "@mobinogi/shared";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react"
 
-export default function Pagination({ type, totalPage = 25, pageSize = 10 }: { type: Type, totalPage?: number, pageSize?: number }) {
+export default function Pagination({
+	type,
+	totalPage = 25,
+	pageSize = 10,
+}: {
+	type: Type;
+	totalPage?: number;
+	pageSize?: number;
+}) {
 	// 페이지 초기화
 	useEffect(() => {
 		setCurrentPage(1)
 	}, [type])
 
 	// 페이지네이션
-	const [currentPage, setCurrentPage] = useState(1);
+	const searchParams = useSearchParams();
+	const [currentPage, setCurrentPage] = useState(() => {
+		const fromUrl = Number(searchParams.get('page'));
+		return Number.isFinite(fromUrl) && fromUrl > 0 ? fromUrl : 1;
+	});
+	useEffect(() => {
+		const fromUrl = Number(searchParams.get('page'));
+		const next = Number.isFinite(fromUrl) && fromUrl > 0 ? fromUrl : 1;
+		if (next !== currentPage) setCurrentPage(next);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchParams]);
 	// 현재 페이지가 속한 그룹의 인덱스 계산 (0부터 시작)
 	const currentGroupIndex = Math.floor((currentPage - 1) / pageSize);
 	// 해당그룹의 시작과 끝 페이지 계산
@@ -23,7 +41,6 @@ export default function Pagination({ type, totalPage = 25, pageSize = 10 }: { ty
 	// 현재 페이지가 바뀌면 라우터 업데이트
 	useEffect(() => { handleRouter() }, [currentPage])
 	const router = useRouter();
-	const searchParams = useSearchParams();
 	const handleRouter = () => {
 		const params = new URLSearchParams(searchParams);
 
@@ -37,13 +54,13 @@ export default function Pagination({ type, totalPage = 25, pageSize = 10 }: { ty
 			setCurrentPage(1);
 		}
 		else if (page === 'last') {
-			setCurrentPage(25);
+			setCurrentPage(totalPage);
 		}
 		else if (page === 'prev') {
-			setCurrentPage(currentPage - 1);
+			setCurrentPage(Math.max(1, currentPage - 1));
 		}
 		else if (page === 'next') {
-			setCurrentPage(currentPage + 1);
+			setCurrentPage(Math.min(totalPage, currentPage + 1));
 		}
 		else {
 			setCurrentPage(page);

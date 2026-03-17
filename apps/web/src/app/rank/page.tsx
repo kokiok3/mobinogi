@@ -1,4 +1,4 @@
-import { TYPE, Type, TYPE_KOREAN, TypeKorean } from '@mobinogi/shared';
+import { FetchRankQuery, Rank, TYPE, Type, TYPE_KOREAN, TypeKorean } from '@mobinogi/shared';
 import Pagination from '@/components/Pagination';
 import RankingTable from '@/components/RankingTable';
 import Search from '@/components/Search';
@@ -8,15 +8,36 @@ import Crown from "@/assets/images/crown.gif"
 import Fish from "@/assets/images/fish.gif"
 import Trophy from "@/assets/images/trophy.gif"
 
+const fetchRankingData = async (type: Type) => {
+	const query: FetchRankQuery = { t: type }
+	const queryString = new URLSearchParams(query as unknown as Record<string, string>).toString();
 
-export default async function PageRank({ searchParams }: { searchParams: Promise<{ page?: string, t: Type }> }) {
+	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rank?${queryString}`);
+	const data = await response.json();
+
+	const count = 500;
+	return (data.data as Rank[]).slice(0, count);
+}
+
+
+export default async function PageRank({
+	searchParams,
+}: {
+	searchParams: Promise<{ page?: string; t?: Type; s?: string }>;
+}) {
 
 	const params = await searchParams;
 
 	const currentPage = Number(params.page) || 1;
 	const currentType = params.t || TYPE.power;
+	const s = (params.s ?? '').trim();
 
 	const typeKorean: TypeKorean = TYPE_KOREAN[currentType]
+
+	const rawList = await fetchRankingData(currentType);
+	const filteredList = s
+		? rawList.filter((r) => r.name.includes(s))
+		: rawList;
 
 	return (
 		<div className="mt-60 xl:px-200">
@@ -94,11 +115,13 @@ export default async function PageRank({ searchParams }: { searchParams: Promise
 				{/* 테이블 헤더 끝 */}
 
 				{/* 테이블 */}
-				<RankingTable page={currentPage} type={currentType}></RankingTable>
+				<RankingTable list={filteredList} page={currentPage} type={currentType}></RankingTable>
 				{/* 테이블 끝 */}
 
 				{/* 페이지네이션 */}
-				<Pagination type={currentType}></Pagination>
+				{filteredList.length > 0 && (
+					<Pagination type={currentType} />
+				)}
 				{/* 페이지네이션 끝 */}
 			</div>
 		</div>

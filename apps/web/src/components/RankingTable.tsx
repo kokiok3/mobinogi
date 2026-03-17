@@ -1,29 +1,23 @@
-import { Rank, FetchRankQuery, Type, TYPE_KOREAN } from '@mobinogi/shared';
+import { Rank, Type, TYPE_KOREAN } from '@mobinogi/shared';
 import GoldMedal from "@/assets/images/gold-medal.png"
 import SilverMedal from "@/assets/images/silver-medal.png"
 import BronzeMedal from "@/assets/images/bronze-medal.png"
 import Image from 'next/image';
 
-const fetchRankingData = async (type: Type) => {
-    const query: FetchRankQuery = { t: type }
-    const queryString = new URLSearchParams(query as unknown as Record<string, string>).toString();
-
-    const response = await fetch(`
-    ${process.env.NEXT_PUBLIC_API_URL}/rank?${queryString}`);
-    const data = await response.json();
-
-    const count = 500;
-    return data.data.splice(0, count);
-}
-
-export default async function RankingTable({ page, type }: { page: number, type: Type }) {
-    const rankingList = await fetchRankingData(type);
-
+export default function RankingTable({
+    list,
+    page,
+    type,
+}: {
+    list: Rank[];
+    page: number;
+    type: Type;
+}) {
     // page + 20개 자르기
     // 예를 들면 1페이지면 1~20, 2페이지면 21~ 40, 3페이지면 31~50
     // 시작인덱스 가져오기
     const startIndex = (page - 1) * 20
-    const pagingList = rankingList.splice(startIndex, 20);
+    const pagingList = list.slice(startIndex, startIndex + 20);
 
     const isShowRank = (index: number) => {
         return (index + 1 + startIndex === 1 ||
