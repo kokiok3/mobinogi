@@ -18,11 +18,31 @@
     }
 
     .gnb__menu__mobile {
-        /* @apply w-40 h-40; */
         @apply inline-flex;
 
         @media (min-width: 1280px) {
             @apply hidden;
+        }
+    }
+
+    .rank__header {
+        @apply flex flex-col gap-10 mt-60 px-30;
+
+        @media (min-width: 1280px) {
+            @apply flex-row items-center justify-between px-0;
+        }
+    }
+
+    .rank__list {
+        @apply flex flex-col;
+
+        .rank__item {
+            @apply flex flex-col gap-20 py-30 border-b border-gray-100;
+            @apply last:border-b-0;
+        }
+
+        .rank__info {
+            @apply flex;
         }
     }
 }
