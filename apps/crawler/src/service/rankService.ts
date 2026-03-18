@@ -7,6 +7,7 @@ import { Rank, TYPE, SERVER, FetchRank, Type } from '@mobinogi/shared';
 puppeteerExtra.use(StealthPlugin())
 
 const extractRankingListFromHtml = (responseBody: any): Rank[] => {
+
     try {
 
         const $ = cheerio.load(responseBody);
@@ -24,6 +25,10 @@ const extractRankingListFromHtml = (responseBody: any): Rank[] => {
             })
         })
 
+        if (rankingList.length <= 0) {
+            console.warn(`추출할 데이터 없음: response: $${responseBody}`);
+        }
+
         return rankingList
     } catch (error) {
         console.error('extractRankingListFromHtml 에러', error)
@@ -35,7 +40,7 @@ export const fetchRank = async (page: Page, body: FetchRank): Promise<Rank[]> =>
 
     try {
         // // 1. 먼저 페이지에 접속하여 쿠키 및 세션을 확보
-        // await page.goto(`https://mabinogimobile.nexon.com/Ranking/List?t=${body.type}`)
+        await page.goto(`https://mabinogimobile.nexon.com/Ranking/List?t=${body.type}`)
 
         // 2. 브라우저 내부에서 직접 fetch(AJAX)를 실행합
         // 이 방식은 브라우저의 모든 헤더와 쿠키를 그대로 사용하므로 403을 피할 가능성이 매우 높습니다.
@@ -99,10 +104,9 @@ const launchBrowser = async () => {
 }
 export const getAllServerRank = async (type: Type): Promise<Rank[]> => {
     const serverKeys = Object.keys(SERVER);
-    const maxPage = 8;
+    const maxPage = 4;
     let allData: Rank[] = []
     const page = await launchBrowser()
-    await page.goto(`https://mabinogimobile.nexon.com/Ranking/List?t=${type}`)
 
     for (const server of serverKeys) {
         console.log(server)
@@ -119,6 +123,7 @@ export const getAllServerRank = async (type: Type): Promise<Rank[]> => {
 
                 const response = await fetchRank(page, body);
                 allData = [...allData, ...response];
+                console.log('allData.length:', allData.length)
 
                 // 429 방지를 위한 매 요청 사이 짧은 휴식
                 await sleep()
@@ -142,12 +147,19 @@ export const getAllServerRank = async (type: Type): Promise<Rank[]> => {
 
     await page.close();
 
-    return sortRankByPower(allData);
+    return setRankOrder(sortRankByPower(allData));
 }
 
 const sortRankByPower = (rankingList: Rank[]) => {
     const descendingList = rankingList.sort((a, b) => +(b.power) - +(a.power));
     return descendingList;
+}
+
+const setRankOrder = (rankingList: Rank[]) => {
+    return rankingList.map((e, i) => ({
+        rank: i + 1,
+        ...e,
+    }))
 }
 
 export const getRankingType = (type: Type) => {
