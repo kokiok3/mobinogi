@@ -15,7 +15,6 @@ export default function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
     const getMenuStyle = (type: Type) => {
-        console.log(queryType)
         const isActive = queryType === type;
 
         return {
