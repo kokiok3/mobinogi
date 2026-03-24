@@ -6,7 +6,8 @@ import LogoIcon from "@/assets/icons/LogoIcon"
 import { TYPE, Type } from "@mobinogi/shared"
 import { useState } from "react"
 
-const MENU = [{ name: '전투력', path: '/rank', query: { t: TYPE.power } }, { name: '매력', path: '/rank', query: { t: TYPE.charm } }, { name: '생활', path: '/rank', query: { t: TYPE.living } }, { name: '종합', path: '/rank', query: { t: TYPE.mix } }]
+const MENU = [{ name: '전투력', path: '/rank', query: { t: TYPE.power } }, { name: '매력', path: '/rank', query: { t: TYPE.charm } }, { name: '생활', path: '/rank', query: { t: TYPE.living } }]
+// const MENU = [{ name: '전투력', path: '/rank', query: { t: TYPE.power } }, { name: '매력', path: '/rank', query: { t: TYPE.charm } }, { name: '생활', path: '/rank', query: { t: TYPE.living } }, { name: '종합', path: '/rank', query: { t: TYPE.mix } }]
 
 export default function Navigation() {
     const searchParams = useSearchParams()
