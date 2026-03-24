@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   },
   // <meta name="google-site-verification content="값" />으로 변환된다.
   verification: {
-    google: 'google4b08cc1a3fc80fa5.html',
+    google: 'Is9iasnULYAvarhpjC0hAM1OclRcLVnkpo-co2E81Yg',
   },
   // <meta name="naver-site-verification" content="값" />으로 변환된다.
   // other: {
