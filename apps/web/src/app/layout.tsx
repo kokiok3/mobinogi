@@ -45,9 +45,9 @@ export const metadata: Metadata = {
     google: 'Is9iasnULYAvarhpjC0hAM1OclRcLVnkpo-co2E81Yg',
   },
   // <meta name="naver-site-verification" content="값" />으로 변환된다.
-  // other: {
-  //   'naver-site-verification': '값',
-  // },
+  other: {
+    'naver-site-verification': '746fe0f32bd5f487bfa431cbd49fe629f720b33d',
+  },
 };
 
 export default function RootLayout({
