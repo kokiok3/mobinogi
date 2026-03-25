@@ -7,6 +7,7 @@ import Sword from "@/assets/images/sword.gif"
 import Crown from "@/assets/images/crown.gif"
 import Fish from "@/assets/images/fish.gif"
 import Trophy from "@/assets/images/trophy.gif"
+import TableContainer from '@/components/TableContainer';
 
 const fetchRankingData = async (type: Type) => {
 	const query: FetchRankQuery = { t: type }
@@ -28,17 +29,10 @@ export default async function PageRank({
 
 	const params = await searchParams;
 
-	const currentPage = Number(params.page) || 1;
 	const currentType = params.t || TYPE.power;
-	const s = (params.s ?? '').trim();
-
 	const typeKorean: TypeKorean = TYPE_KOREAN[currentType]
 
 	const rawList = await fetchRankingData(currentType);
-	const filteredList = s
-		? rawList.filter((r) => r.name.includes(s))
-		: rawList;
-	const totalPage = filteredList.length > 0 ? Math.ceil(filteredList.length / 20) : 0;
 
 	return (
 		<div className="mt-60 xl:px-200">
@@ -105,27 +99,9 @@ export default async function PageRank({
 					</div>
 				</div>
 
-				{/* 테이블 헤더 */}
-				<div className='rank__header'>
-					<span className='text-gray-500 text-[12px]'>
-						매 00분에 랭킹 정보가 업데이트 됩니다. 랭킹에 반영되기까지 일정 시간이 소요될 수 있습니다.
-					</span>
+				<TableContainer list={rawList} type={currentType}></TableContainer>
 
-					<Search />
-				</div>
-				{/* 테이블 헤더 끝 */}
-
-				{/* 테이블 */}
-				<RankingTable list={filteredList} page={currentPage} type={currentType}></RankingTable>
-				{/* 테이블 끝 */}
-
-				{/* 페이지네이션 */}
-				{filteredList.length > 0 && (
-					<Pagination type={currentType} totalPage={totalPage} />
-				)}
-				{/* 페이지네이션 끝 */}
 			</div>
 		</div>
-
 	)
 }

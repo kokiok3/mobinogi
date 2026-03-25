@@ -1,35 +1,23 @@
 "use client"
 
-import { Type, TYPE } from "@mobinogi/shared";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 export default function Pagination({
-	type,
 	totalPage = 25,
 	pageSize = 10,
+	currentPage,
+	onChange
 }: {
-	type: Type;
 	totalPage?: number;
 	pageSize?: number;
+	currentPage: number;
+	onChange: (page: number) => void;
 }) {
-	// 페이지 초기화
 	useEffect(() => {
-		setCurrentPage(1)
-	}, [type])
+		onChange(currentPage);
+		window.scrollTo(0, 0);
+	}, [currentPage])
 
-	// 페이지네이션
-	const searchParams = useSearchParams();
-	const [currentPage, setCurrentPage] = useState(() => {
-		const fromUrl = Number(searchParams.get('page'));
-		return Number.isFinite(fromUrl) && fromUrl > 0 ? fromUrl : 1;
-	});
-	useEffect(() => {
-		const fromUrl = Number(searchParams.get('page'));
-		const next = Number.isFinite(fromUrl) && fromUrl > 0 ? fromUrl : 1;
-		if (next !== currentPage) setCurrentPage(next);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [searchParams]);
 	// 현재 페이지가 속한 그룹의 인덱스 계산 (0부터 시작)
 	const currentGroupIndex = Math.floor((currentPage - 1) / pageSize);
 	// 해당그룹의 시작과 끝 페이지 계산
@@ -38,32 +26,21 @@ export default function Pagination({
 	const pageToShow = Array.from({ length: endPage - startPage + 1 }, (_e, i) =>
 		i + startPage)
 
-	// 현재 페이지가 바뀌면 라우터 업데이트
-	useEffect(() => { handleRouter() }, [currentPage])
-	const router = useRouter();
-	const handleRouter = () => {
-		const params = new URLSearchParams(searchParams);
-
-		// router에 파라미터 추가
-		params.set('page', currentPage.toString());
-		router.push(`?${params.toString()}`)
-	}
-
 	const handlePageClick = (page: number | 'first' | 'last' | 'prev' | 'next') => {
 		if (page === 'first') {
-			setCurrentPage(1);
+			onChange(1);
 		}
 		else if (page === 'last') {
-			setCurrentPage(totalPage);
+			onChange(totalPage);
 		}
 		else if (page === 'prev') {
-			setCurrentPage(Math.max(1, currentPage - 1));
+			onChange(Math.max(1, currentPage - 1));
 		}
 		else if (page === 'next') {
-			setCurrentPage(Math.min(totalPage, currentPage + 1));
+			onChange(Math.min(totalPage, currentPage + 1));
 		}
 		else {
-			setCurrentPage(page);
+			onChange(page);
 		}
 	}
 

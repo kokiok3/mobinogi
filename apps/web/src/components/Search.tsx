@@ -1,35 +1,14 @@
 "use client"
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 
-export default function Search() {
+export default function Search({
+    onChange
+}: {
+    onChange: (keyword: string) => void;
 
-    const router = useRouter();
-    const searchParams = useSearchParams();
+}) {
 
-    const sFromUrl = useMemo(() => searchParams.get('s') ?? '', [searchParams]);
-    const [search, setSearch] = useState(sFromUrl);
-
-    useEffect(() => {
-        setSearch(sFromUrl);
-    }, [sFromUrl]);
-
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(e.target.value)
-    }
-
-    const applySearchToUrl = () => {
-        const params = new URLSearchParams(searchParams);
-        const trimmed = search.trim();
-
-        if (trimmed) params.set('s', trimmed);
-        else params.delete('s');
-
-        // 검색하면 1페이지부터
-        params.set('page', '1');
-
-        router.push(`?${params.toString()}`);
-    }
+    const [search, setSearch] = useState('');
 
     return (
         <div className="relative">
@@ -40,16 +19,16 @@ export default function Search() {
                 role="combobox"
                 aria-expanded="false"
                 value={search}
-                onChange={handleSearchChange}
+                onChange={(e) => setSearch(e.target.value.trim())}
                 onKeyDown={(e) => {
-                    if (e.key === 'Enter') applySearchToUrl();
+                    if (e.key === 'Enter') onChange(search);
                 }}
             />
             <button
                 type="button"
                 aria-label="검색"
                 className="absolute end-10 top-1/2 shrink-0 -translate-y-1/2"
-                onClick={applySearchToUrl}
+                onClick={() => onChange(search)}
             >
                 <span className="icon-[tabler--search] text-base-content"></span>
             </button>
