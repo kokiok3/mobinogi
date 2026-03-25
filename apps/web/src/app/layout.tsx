@@ -57,6 +57,19 @@ export default function RootLayout({
 }>) {
   return (
     <html >
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link
+          rel="apple-touch-icon"
+          href="/favicon.ico"
+          sizes="180x180"
+        />
+        <link
+          rel="apple-touch-icon"
+          href="/favicon.ico"
+          sizes="360x360"
+        />
+      </head>
       <body className="font-['Pretendard']">
         <Suspense fallback={<nav className="sticky top-0 z-2 flex items-center mx-auto justify-center w-full h-55 bg-white" />}>
           <Gnb />
