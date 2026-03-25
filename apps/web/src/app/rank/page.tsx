@@ -1,5 +1,4 @@
 import { FetchRankQuery, Rank, TYPE, Type, TYPE_KOREAN, TypeKorean } from '@mobinogi/shared';
-import Pagination from '@/components/Pagination';
 import Image from 'next/image';
 import Sword from "@/assets/images/sword.gif"
 import Crown from "@/assets/images/crown.gif"
