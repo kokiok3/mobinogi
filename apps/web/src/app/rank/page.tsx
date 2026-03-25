@@ -38,6 +38,7 @@ export default async function PageRank({
 	const filteredList = s
 		? rawList.filter((r) => r.name.includes(s))
 		: rawList;
+	const totalPage = filteredList.length > 0 ? Math.ceil(filteredList.length / 20) : 0;
 
 	return (
 		<div className="mt-60 xl:px-200">
@@ -120,7 +121,7 @@ export default async function PageRank({
 
 				{/* 페이지네이션 */}
 				{filteredList.length > 0 && (
-					<Pagination type={currentType} />
+					<Pagination type={currentType} totalPage={totalPage} />
 				)}
 				{/* 페이지네이션 끝 */}
 			</div>
