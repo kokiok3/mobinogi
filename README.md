@@ -79,9 +79,18 @@
 * **SEO:**
   공식 홈페이지가 다양한 검색어에도 상위에 노출되는 것을 확인하며, 보유한 데이터의 양이 SEO에 중요한 영향을 준다는 점을 체감했습니다.
   연관 검색어를 기준으로 검색 결과 내 노출 순위를 확인하고, 메타데이터를 보완할 때마다 순위 변화를 관찰하는 과정이 재밌었습니다. SEO개선 효과를 직접 확인할 수 있었습니다.
+   <figure class="half">
+      <figcaption> <b>검색어(페이지): 모비랭크(1) / 마비노기 모바일 랭킹(1) / 모비노기 랭킹(4) / 모비노기 순위(5)</b> </figcaption>
+      <div>
+        <img src="https://github.com/user-attachments/assets/b0e3e904-9561-4bca-b988-1af45fee37a4" width="20%"/>  
+        <img src="https://github.com/user-attachments/assets/67c25bd8-522b-4674-ab7c-f4e357d4b29f" width="20%"/>  
+        <img src="https://github.com/user-attachments/assets/576e9ea2-b527-4b8a-bcdc-4e53208a2950" width="20%"/>  
+        <img src="https://github.com/user-attachments/assets/dcbbb696-e538-4f90-a487-5216bbe04e81" width="20%"/>
+      </div>
+    </figure>
   
 * **Tailwind CSS**: 적용이 쉽지만 스타일이 많아질 수 록 유지보수하기 까다로웠습니다. 클래스명 코드가 길어져 가독성이 떨어진다고 생각되어 개인적으로 선호하는 방법은 아니었습니다. 차라리 CSS-in-JS 가 JS 유저에게 더 다루기 쉬운 선택지로 느껴졌습니다.
-  
+
 * **데이터 수집의 한계**: 넥슨에서 제공하는 오픈 API가 있을 거라 생각했는데 제공되는 오픈 API가 없어서 크롤링을 하게 되었습니다. 공식 홈페이지에서 데이터 요청 시 데이터 리스트가 아닌 HTML을 응답으로 주기 때문에 HTML 기반으로 크롤링해야 했는데 DOM 구조 변화에 취약한 점이 아쉬웠습니다. 이에 따라 전체 유저 조회를 하기에는 부담이 커서 서버 부하를 최소화할 수 있도록 카테고리별 상위 ~~1000~~ 500명으로 제한했습니다.
   처음에는 got을 이용해 http2 호환이 가능한 통신 라이브러리를 사용했습니다만 로컬, Docker desktop 환경에서만 통신이 되고 Railway에 배포를 한 뒤에는 통신이 되지 않는 문제가 있었습니다. 이는 Railway에서 아웃바운드 설정이 되어 있어있지 않아서 통신이 이뤄지지 않았기 때문입니다. 이를 간단히 해결하기 위해 got라이브러리 대신 이전에 쿠키수집을 위해 사용한 puppeteer를 이용해 크롤링을 수행하기로 했습니다. puppeteer를 사용하면 브라우저를 이용해 데이터를 수집하기 때문에 통신문제는 해결되었습니다. 하지만 Cloudflare를 통해 봇으로 인지되었습니다. puppeteer에서 Cloudflare를 우회하는 puppeteer-real-browser 라이브러리가 있다고 합니다. 리눅스 시스템에서 사용할 경우 xvfb도 설치가 필요합니다. (puppeteer-real-browser 는 시도하지 않았습니다.)
   
