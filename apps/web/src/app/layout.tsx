@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next"
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Gnb from "@/components/Gnb"
@@ -128,6 +129,7 @@ export default function RootLayout({
           {children}
         </div>
         <Footer></Footer>
+        <Analytics />
       </body>
     </html>
   );

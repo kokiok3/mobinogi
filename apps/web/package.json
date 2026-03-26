@@ -10,6 +10,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@mobinogi/shared": "*",
+    "@vercel/analytics": "^2.0.1",
     "axios": "^1.13.2",
     "cheerio": "^1.1.2",
     "cors": "^2.8.6",
@@ -20,8 +22,7 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "redis": "^5.10.0",
-    "tough-cookie": "^6.0.0",
-    "@mobinogi/shared": "*"
+    "tough-cookie": "^6.0.0"
   },
   "devDependencies": {
     "@iconify-json/tabler": "^1.2.26",
